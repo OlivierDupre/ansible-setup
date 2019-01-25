@@ -1,0 +1,15 @@
+---
+- hosts: all
+  become: yes
+  tasks:
+  - name: Install base packages
+    apt: state=latest update_cache=yes name={{item}}
+    with_items:
+    - simple-scan
+    - onboard 
+  - name: Remove useless packages
+    apt: name={{item}} state=absent
+    with_items:
+    - simple-scan
+    - onboard* 
+    - libreoffice*    
