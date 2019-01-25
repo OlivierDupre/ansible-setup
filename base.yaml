@@ -3,13 +3,11 @@
   become: yes
   tasks:
   - name: Install base packages
-    apt: state=latest update_cache=yes name={{item}}
-    with_items:
-    - simple-scan
-    - onboard 
+    apt:
+      name: ['git','wget','curl','tilix','vim','apt-transport-https','ca-certificates','software-properties-common']
+      update_cache: yes
+      state: latest
   - name: Remove useless packages
-    apt: name={{item}} state=absent
-    with_items:
-    - simple-scan
-    - onboard* 
-    - libreoffice*    
+    apt: 
+      name: ['simple-scan','onboard*','libreoffice*','media-player*','rhythmbox*','vlc*','gimp*','pix*','thunderbird*','hexchat*','transmission*','tomboy']
+      state: absent
