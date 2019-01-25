@@ -11,5 +11,3 @@
     apt: 
       name: ['simple-scan','onboard*','libreoffice*','media-player*','rhythmbox*','vlc*','gimp*','pix*','thunderbird*','hexchat*','transmission*','tomboy']
       state: absent
-      autoclean: yes
-      autoremove: yes
