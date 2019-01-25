@@ -2,12 +2,25 @@
 - hosts: all
   become: yes
   tasks:
-  - name: Install base packages
+  - name: Remove docker packages
+    apt: 
+      name: ['docker','docker-engine','docker.io','containerd','runc']
+      state: absent
+  - name: Install base packages for Docker
     apt:
-      name: ['git','git-extras','wget','curl','tilix','vim','apt-transport-https','ca-certificates','software-properties-common']
+      name: ['apt-transport-https','ca-certificates','curl','gnupg-agent','software-properties-common']
       update_cache: yes
       state: latest
-  - name: Remove useless packages
-    apt: 
-      name: ['simple-scan','onboard*','libreoffice*','media-player*','rhythmbox*','vlc*','gimp*','pix*','thunderbird*','hexchat*','transmission*','tomboy']
-      state: absent
+  - name: Retrieve offical Docker GPG key
+    shell: curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
+    args:
+      warn: false
+  - name: Find Ubuntu codename
+    shell: . /etc/os-release ; echo $UBUNTU_CODENAME
+    register: ubuntu_codename
+    ignore_errors: true
+  - name: Add Docker repository
+    apt_repository:
+      repo: "deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ ubuntu_codename.stdout_lines[0] }} stable"
+      state: present
+
