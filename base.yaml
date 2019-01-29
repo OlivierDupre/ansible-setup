@@ -13,3 +13,13 @@
       state: absent
       autoclean: yes
       autoremove: yes
+
+- hosts: all
+  tasks:
+  - name: Setup Git
+    shell: |
+      git alias st status
+      git alias ci commit
+      git alias co checkout
+      git alias lg show-tree
+      exit 0
