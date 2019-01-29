@@ -23,4 +23,17 @@
     apt_repository:
       repo: "deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ ubuntu_codename.stdout_lines[0] }} stable"
       state: present
-
+  - name: Install Docker
+    apt:
+      name: docker-ce
+      state: latest
+  - name: Setup Docker
+    shell: |
+      cat > /etc/docker/dameon.json << EOM
+        {
+          "debug": true,
+          "storage-driver": "overlay2",
+          "graph": "/home/odupre/docker/images"
+        }
+        EOM
+      exit 0
