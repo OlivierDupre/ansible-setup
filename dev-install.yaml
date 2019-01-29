@@ -29,10 +29,6 @@
       warn: false
   - name: Install Node
     shell: |
-      #cd $NVM_DIR
-      #pwd > ../titi
-      #ls . >> ../titi
       source "{{ ansible_env.HOME }}/.nvm/nvm.sh"
-      #command -v nvm >> ../titi
       nvm install node
       exit 0
