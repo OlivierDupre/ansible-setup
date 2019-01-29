@@ -19,13 +19,8 @@
       cd "{{ ansible_env.HOME }}/.sdkman/bin/"
       source ./sdkman-init.sh
       sdk install java
+      cd
       exit 0
-    #  - name: Install Java
-    #    shell: sdk install java
-
-- hosts: all
-  become: yes
-  tasks:
   - name: Install NVM
     shell: >
       curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.34.0/install.sh | bash
@@ -33,4 +28,11 @@
       creates: "{{ ansible_env.HOME }}/.nvm/nvm.sh"
       warn: false
   - name: Install Node
-    shell: nvm install node
+    shell: |
+      #cd $NVM_DIR
+      #pwd > ../titi
+      #ls . >> ../titi
+      source "{{ ansible_env.HOME }}/.nvm/nvm.sh"
+      #command -v nvm >> ../titi
+      nvm install node
+      exit 0
