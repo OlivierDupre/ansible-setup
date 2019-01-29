@@ -1,0 +1,23 @@
+---
+- hosts: all
+  become: yes
+  tasks:
+  - name: Install base packages
+    apt:
+      name: ['git','git-extras','wget','curl','tilix','vim','apt-transport-https','ca-certificates','software-properties-common','build-essential','libssl-dev','htop','tree','make','libc6-i386','lib32z1','libc6','python','python-pip','python-dev','libssl-dev','libcurl4-gnutls-dev','libexpat1-dev','unzip','python-lxml','g++','sdkman','nvm']
+      update_cache: yes
+      state: latest
+  - name: Install SDKMan
+    shell: >
+      curl -s "https://get.sdkman.io" | bash
+      source "{{ ansible_env.HOME }}/.sdkman/bin/sdkman-init.sh"
+      exit 0
+  - name: Install Java
+    shell: sdk install java
+  - name: Install NVM
+    shell: >
+      curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.34.0/install.sh | bash
+    args:
+      creates: "{{ ansible_env.HOME }}/.nvm/nvm.sh"
+  - name: Install Node
+    shell: nvm install node

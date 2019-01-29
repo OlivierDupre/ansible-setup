@@ -33,7 +33,7 @@
         {
           "debug": true,
           "storage-driver": "overlay2",
-          "graph": "/home/odupre/docker/images"
+          "graph": "{{ ansible_env.HOME }}/docker/images"
         }
         EOM
       exit 0

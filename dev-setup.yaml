@@ -1,0 +1,16 @@
+---
+- hosts: all
+  tasks:
+  - name: Setup Git
+    shell: |
+      git alias st status
+      git alias ci commit
+      git alias co checkout
+      git alias lg show-tree
+      exit 0
+
+  - name: Setup VIM as default editor
+    shell: |
+      echo 'export VISUAL=vim' >> ~/.bash_aliases
+      echo 'export EDITOR="$VISUAL"' >> ~/.bash_aliases
+      exit 0

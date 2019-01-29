@@ -1,0 +1,5 @@
+---
+- import_playbook: dev-install.yaml
+- import_playbook: perso-install.yaml
+- import_playbook: docker.yaml 
+- import_playbook: dev-setup.yaml
