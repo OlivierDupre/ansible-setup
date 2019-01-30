@@ -28,6 +28,7 @@
       name: docker-ce
       state: latest
   - name: Setup Docker
+    # Read options from https://docs.docker.com/engine/reference/commandline/dockerd/#daemon-configuration-file
     shell: |
       cat > /etc/docker/dameon.json << EOM
         {
