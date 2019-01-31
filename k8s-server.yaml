@@ -16,3 +16,6 @@
       name: ['kubelet','kubeadm']
       state: latest
       update_cache: yes
+  - name: Setup K8S cluster
+    shell: |
+      kubeadm init --pod
