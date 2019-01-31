@@ -12,23 +12,10 @@ apt install -y software-properties-common openssh-server
 apt-add-repository --yes  ppa:ansible/ansible
 apt update -y && sudo apt install -y ansible
 
+# Define IP addresses if needed...
+./add-k8s-ip.sh
+
 # SETUP https://docs.ansible.com/ansible/latest/user_guide/intro_getting_started.html
-if ! grep master /etc/hosts
-then
-  sed -i -e 's/127.0.0.1.*localhost/127.0.0.1\tlocalhost master node1 node2/' /etc/hosts
-  iptables -t nat -A OUTPUT -d 192.168.0.10 -j DNAT --to-destination 127.0.0.1
-  iptables -t nat -A OUTPUT -d 192.168.0.100 -j DNAT --to-destination 127.0.0.1
-  iptables -t nat -A OUTPUT -d 192.168.0.101 -j DNAT --to-destination 127.0.0.1
-
-  cat >> /etc/hosts << EOM
-
-# K8S master IP address
-192.168.0.10    master
-192.168.0.100   node1
-192.168.0.101   node2
-EOM
-fi
-
 touch /etc/ansible/hosts
 if ! grep master /etc/ansible/hosts
 then
