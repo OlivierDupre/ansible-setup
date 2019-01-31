@@ -6,7 +6,10 @@ sudo apt-add-repository --yes  ppa:ansible/ansible
 sudo apt update -y && sudo apt install -y ansible
 
 # SETUP https://docs.ansible.com/ansible/latest/user_guide/intro_getting_started.html
-echo "127.0.0.1" | sudo tee /etc/ansible/hosts
+echo "[master]" | sudo tee /etc/ansible/hosts
+echo "127.0.0.1" | sudo tee -a /etc/ansible/hosts
+echo "[nodes]" | sudo tee -a /etc/ansible/hosts
+echo "127.0.0.1" | sudo tee -a /etc/ansible/hosts
 
 if [ ! -f ~/.ssh/id_rsa ]; then
   ssh-keygen -f ~/.ssh/id_rsa -q -N ''
