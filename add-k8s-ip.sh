@@ -14,3 +14,16 @@ then
 192.168.0.101   node2
 EOM
 fi
+
+if ! grep 192.168.0.10 /etc/network/interfaces
+then
+  cat >> /etc/network/interfaces << EOM
+
+auto enp0s3
+iface enp0s3 inet static
+ address 192.168.0.1/24
+ address 192.168.0.10/24
+ address 192.168.0.100/24
+ address 192.168.0.101/24
+EOM
+fi
