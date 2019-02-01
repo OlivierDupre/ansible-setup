@@ -12,8 +12,9 @@ apt install -y software-properties-common openssh-server
 apt-add-repository --yes  ppa:ansible/ansible
 apt update -y && sudo apt install -y ansible
 
-# Define IP addresses if needed...
-./add-k8s-ip.sh
+#Define IP addresses if needed...
+# Not worth doing this. Setting several IP on the same server, with only one network card is probably not useful. Deploying deveral physical nodes seems smarter to test killing nodes. Can start playing with deploying pods on master like in mini-kube.
+#./add-k8s-ip.sh
 
 # SETUP https://docs.ansible.com/ansible/latest/user_guide/intro_getting_started.html
 touch /etc/ansible/hosts
@@ -21,11 +22,10 @@ if ! grep master /etc/ansible/hosts
 then
 cat >> /etc/ansible/hosts << EOM
 [master]
-192.168.0.10
+$(ifconfig | sed -En 's/127.0.0.1//;s/.*inet (addr:)?(([0-9]*\.){3}[0-9]*).*/\2/p' | head -n1)
 
 [nodes]
-192.168.0.100
-192.168.0.101
+$(ifconfig | sed -En 's/127.0.0.1//;s/.*inet (addr:)?(([0-9]*\.){3}[0-9]*).*/\2/p' | tail -n1)
 EOM
 fi
 
@@ -35,9 +35,8 @@ if [ ! -f ~/.ssh/id_rsa ]; then
   ssh-keygen -f ~/.ssh/id_rsa -q -N ''
 fi
 
-ssh-copy-id -i ~/.ssh/id_rsa.pub $SUDO_USER@master
-ssh-copy-id -i ~/.ssh/id_rsa.pub $SUDO_USER@node1
-ssh-copy-id -i ~/.ssh/id_rsa.pub $SUDO_USER@node2
+ssh-copy-id -i ~/.ssh/id_rsa.pub $SUDO_USER@$(ifconfig | sed -En 's/127.0.0.1//;s/.*inet (addr:)?(([0-9]*\.){3}[0-9]*).*/\2/p' | head -n1)
+ssh-copy-id -i ~/.ssh/id_rsa.pub $SUDO_USER@$(ifconfig | sed -En 's/127.0.0.1//;s/.*inet (addr:)?(([0-9]*\.){3}[0-9]*).*/\2/p' | tail -n1)
 
 ssh-agent bash
 ssh-add ~/.ssh/id_rsa
