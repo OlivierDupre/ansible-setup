@@ -1,5 +1,5 @@
 {
     "debug": true,
     "storage-driver": "overlay2",
-    "graph": "{{ logname_home.stdout }}/docker/images"
+    "data-root": "{{ logname_home.stdout }}/docker/images"
 }
