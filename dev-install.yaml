@@ -36,8 +36,11 @@
 - hosts: master
   become: yes
   tasks:
-  - name: Install VSCode
-    shell: snap install vscode --classic
-    # Load config with extension Settings Sync. Github token store separated, privately in notes with Gist Id.
-    
-
+  - name: Install Snaps
+    shell: |
+      snap install fkill postman 
+      snap install vscode --classic  # Load config with extension Settings Sync. Github token store separated, privately in notes with Gist Id.
+      snap install intellij-idea-community --classic
+      snap install kata-containers --classic
+      snap install google-cloud-sdk --classic
+      snap install aws-cli --classic
