@@ -4,7 +4,7 @@
   tasks:
   - name: Install base packages
     apt:
-      name: ['git','git-extras','wget','curl','tilix','vim','apt-transport-https','ca-certificates','software-properties-common','build-essential','libssl-dev','htop','tree','make','libc6-i386','lib32z1','libc6','python','python-pip','python-dev','libssl-dev','libcurl4-gnutls-dev','libexpat1-dev','unzip','python-lxml','g++','asciinema','snapd']
+      name: ['git','git-extras','wget','curl','tilix','vim','apt-transport-https','ca-certificates','software-properties-common','build-essential','libssl-dev','htop','tree','make','libc6-i386','lib32z1','libc6','python','python-pip','python-dev','libssl-dev','libcurl4-gnutls-dev','libexpat1-dev','unzip','python-lxml','g++','asciinema','gnupg-agent','snapd']
       update_cache: yes
       state: latest
 
@@ -38,4 +38,6 @@
   tasks:
   - name: Install VSCode
     shell: snap install vscode --classic
+    # Load config with extension Settings Sync. Github token store separated, privately in notes with Gist Id.
+    
 
