@@ -6,6 +6,8 @@
     apt: 
       name: ['docker','docker-engine','docker.io','containerd','runc']
       state: absent
+  - name: Remove Docker snaps
+    shell: snap remove docker
   - name: Install base packages for Docker
     apt:
       name: ['apt-transport-https','ca-certificates','curl','gnupg-agent','software-properties-common']
@@ -39,7 +41,7 @@
       # Default data-root is set to "data-root": "/var/snap/docker/common/var-lib-docker" with a flag on the daemon
       # vi usr/sbin/invoke-rc.d usr/sbin/update-rc.d snap/manifest.yaml snap/snapcraft.yaml meta/hooks/install meta/hooks/post-refresh
       src: daemon-template.json
-      dest: /etc/docker/dameon.json
+      dest: /etc/docker/daemon.json
   - name: Reload docker service config
     shell: systemctl daemon-reload 
   - name: Restart docker service

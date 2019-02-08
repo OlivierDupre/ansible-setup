@@ -1,6 +1,11 @@
 ---
 - hosts: all
   become: yes
+  vars:
+    # This used to be a valid path with 18.06 but no longer with 18.09. One solution is to install both tracks stable and edge...
+    # Anyway, Docker support for Snap is over... https://github.com/docker/docker-snap/
+    # Does not make sense to use that file.
+    config_folder: "/var/snap/docker/current/config"
   tasks:
   - name: Remove docker packages
     apt: 
@@ -15,6 +20,8 @@
     shell: > 
       echo $(getent passwd $SUDO_USER | cut -d: -f6)
     register: logname_home
+  - name: Create default Docker config folder if it does not exist yet
+    shell: mkdir -p {{ config_folder }}
   - name: Define Docker daemon options
     # Read options from https://docs.docker.com/engine/reference/commandline/dockerd/#daemon-configuration-file
     template:
@@ -22,7 +29,7 @@
       # Default data-root is set to "data-root": "/var/snap/docker/common/var-lib-docker" with a flag on the daemon
       # vi usr/sbin/invoke-rc.d usr/sbin/update-rc.d snap/manifest.yaml snap/snapcraft.yaml meta/hooks/install meta/hooks/post-refresh
       src: daemon-template.json
-      dest: /var/snap/docker/current/config/daemon.json
+      dest: "{{ config_folder }}/daemon.json"
   - name: Restart Docker to take into account new config
     shell: snap restart docker
     
