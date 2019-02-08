@@ -6,35 +6,20 @@
     apt: 
       name: ['docker','docker-engine','docker.io','containerd','runc']
       state: absent
-  - name: Install base packages for Docker
-    apt:
-      name: ['apt-transport-https','ca-certificates','curl','gnupg-agent','software-properties-common']
-      update_cache: yes
-      state: latest
-  - name: Retrieve offical Docker GPG key
-    shell: curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
-    args:
-      warn: false
-  - name: Find Ubuntu codename
-    shell: . /etc/os-release ; echo $UBUNTU_CODENAME
-    register: ubuntu_codename
-    ignore_errors: true
-  - name: Add Docker repository
-    apt_repository:
-      repo: "deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ ubuntu_codename.stdout_lines[0] }} stable"
-      state: present
   - name: Install Docker
-    apt:
-      name: docker-ce
-      state: latest
-  - name: Setup Docker
+    shell: snap install docker
+  - name: Save logname as a variable
+    # https://stackoverflow.com/a/7359006
+    shell: > 
+      echo $(getent passwd $SUDO_USER | cut -d: -f6)
+    register: logname_home
+  - name: Define Docker daemon options
     # Read options from https://docs.docker.com/engine/reference/commandline/dockerd/#daemon-configuration-file
-    shell: |
-      cat > /etc/docker/dameon.json << EOM
-        {
-          "debug": true,
-          "storage-driver": "overlay2",
-          "graph": "{{ ansible_env.HOME }}/docker/images"
-        }
-        EOM
-      exit 0
+    template:
+      # For snap installation of Docker. https://github.com/docker/docker-snap/issues/22#issuecomment-423361607
+      src: daemon-template.json
+      dest: /var/snap/docker/current/config/daemon.json
+  - name: Restart Docker to take into account new config
+    shell: snap restart docker
+    
+      
