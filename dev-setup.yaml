@@ -6,7 +6,7 @@
       git alias st status
       git alias ci commit
       git alias co checkout
-      git alias lg show-tree
+      git alias lg "log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit"
       exit 0
 
   - name: Setup VIM as default editor
