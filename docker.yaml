@@ -1,10 +1,12 @@
 ---
 - hosts: all
   become: yes
+  vars:
+    docker_version: "18.06.0~ce~3-0~ubuntu"
   tasks:
   - name: Remove docker packages
     apt: 
-      name: ['docker','docker-engine','docker.io','containerd','runc']
+      name: ['docker','docker-ce','docker-engine','docker.io','containerd','runc','containerd.io', 'docker-ce-cli']
       state: absent
   - name: Remove Docker snaps
     shell: snap remove docker
@@ -27,8 +29,9 @@
       state: present
   - name: Install Docker
     apt:
-      name: docker-ce
-      state: latest
+      # https://docs.docker.com/install/linux/docker-ce/ubuntu/#install-docker-ce-1
+      name: docker-ce={{ docker_version }}
+      update_cache: yes
   - name: Save logname (aka user) home as a variable
     # https://stackoverflow.com/a/7359006
     shell: > 
