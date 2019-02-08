@@ -21,7 +21,10 @@
       echo $(getent passwd $SUDO_USER | cut -d: -f6)
     register: logname_home
   - name: Create default Docker config folder if it does not exist yet
-    shell: mkdir -p {{ config_folder }}
+    file: 
+      path: {{ config_folder }}
+      state: directory
+      mode: 0755
   - name: Define Docker daemon options
     # Read options from https://docs.docker.com/engine/reference/commandline/dockerd/#daemon-configuration-file
     template:
