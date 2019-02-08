@@ -2,23 +2,13 @@
 - hosts: all
   become: yes
   tasks:
-  - name: Add Spotify first repository keys
-    #    apt_key:
-    #      keyserver: keyserver.ubuntu.com
-    #      id: BBEBDCB318AD50EC6865090613B00F1FD2C19886
-    #  - name: Add Spotify second repository keys
-    #    apt_key:
-    #      keyserver: keyserver.ubuntu.com
-    #      id: 0DF731E45CE24F27EEEB1450EFDC8610341D9410
-    shell: >
-      apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys BBEBDCB318AD50EC6865090613B00F1FD2C19886 0DF731E45CE24F27EEEB1450EFDC8610341D9410
-      exit 0
-  - name: Add Spotify repository
-    apt_repository:
-      repo: deb http://repository.spotify.com stable non-free
-      state: present
   - name: Install personal packages
     apt:
-      name: ['most','asunder','pdfsam','flac','gparted','openshot','timeshift','playonlinux','gettext','colordiff','meld','toilet','cmatrix','factor','asciinema','spotify-client']
+      name: ['most','asunder','pdfsam','flac','gparted','openshot','timeshift','playonlinux','gettext','colordiff','meld','toilet','cmatrix','asciinema','snapd']
       update_cache: yes
       state: latest
+  - name: Install Spotify
+    shell: |
+      snap install spotify whatsdesk slack chromium tor
+      snap install skype --classic
+      snap install slack --classic
