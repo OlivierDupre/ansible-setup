@@ -4,9 +4,8 @@
   tasks:
   - name: Install base packages
     apt:
-      name: ['git','git-extras','wget','curl','tilix','vim','apt-transport-https','ca-certificates','software-properties-common','build-essential','libssl-dev','htop','tree','make','libc6-i386','lib32z1','libc6','python','python-pip','python-dev','libssl-dev','libcurl4-gnutls-dev','libexpat1-dev','unzip','python-lxml','g++','asciinema']
+      name: ['git','git-extras','wget','curl','tilix','vim','apt-transport-https','ca-certificates','software-properties-common','build-essential','libssl-dev','htop','tree','make','libc6-i386','lib32z1','libc6','python','python-pip','python-dev','libssl-dev','libcurl4-gnutls-dev','libexpat1-dev','unzip','python-lxml','g++','asciinema','snapd']
       update_cache: yes
-      upgrade: safe
       state: latest
 
 - hosts: all
@@ -33,3 +32,10 @@
       source "{{ ansible_env.HOME }}/.nvm/nvm.sh"
       nvm install node
       exit 0
+
+- hosts: master
+  become: yes
+  tasks:
+  - name: Install VSCode
+    shell: snap install vscode --classic
+
