@@ -11,6 +11,14 @@
 
   - name: Setup VIM as default editor
     shell: |
+      if [ -f ~/.bash_aliases ]; then
+        nb_definitions=`grep vim ~/.bash_aliases | wc -l`
+        if [ ! $nb_definitions -eq 0 ]; then
+          echo "VIM as default editor already defined"
+          exit 0
+        fi
+      fi
+
       echo 'export VISUAL=vim' >> ~/.bash_aliases
       echo 'export EDITOR="$VISUAL"' >> ~/.bash_aliases
       exit 0
@@ -23,3 +31,29 @@
       exit 0
     args:
       executable: /bin/bash
+
+  - name: Create common aliases
+    shell: |
+      if [ ! -f ~/.bash_aliases ]; then
+        touch ~/.bash_aliases
+      fi
+
+      nb_definitions=`grep 'll=' ~/.bash_aliases | wc -l`
+      if [ $nb_definitions -eq 0 ]; then
+        echo "alias ll='ls -alhF'" >> ~/.bash_aliases
+      fi
+
+      nb_definitions=`grep kubectl ~/.bash_aliases | wc -l`
+      if [ $nb_definitions -eq 0 ]; then
+        echo "alias k='kubectl'" >> ~/.bash_aliases
+      fi
+      
+      nb_definitions=`grep ansible ~/.bash_aliases | wc -l`
+      if [ $nb_definitions -eq 0 ]; then
+        echo "alias ap='ansible-playbook'" >> ~/.bash_aliases
+        echo "alias apb='ansible-playbook --ask-become-pass'" >> ~/.bash_aliases
+      fi
+
+      exit 0
+    register: output
+  - debug: var=output.stdout_lines
