@@ -22,3 +22,6 @@
       exit 0
     register: output
   - debug: var=output.stdout_lines
+
+  - name: Save kubeadm output
+    shell: echo {{ output.stdout_lines }} > ~/.kubeadm.init
