@@ -36,3 +36,17 @@
     register: logname_home
   - name: Save kubeadm output
     shell: echo "{{ output.stdout_lines }}" >> "{{ logname_home.stdout }}/.kubeadm.init"
+
+  - name: Install calico pod network add-on
+    shell: >
+      kubectl apply -f k8s etcd.yaml calico.yaml calicoctl.yaml
+      kubectl taint nodes --all node-role.kubernetes.io/master-
+
+      if [ ! -f ~/.bash_aliases ]; then
+        touch ~/.bash_aliases
+      fi
+
+      nb_definitions=`grep 'calicoctl=' ~/.bash_aliases | wc -l`
+      if [ $nb_definitions -eq 0 ]; then
+        echo "alias calicoctl='kubectl exec -i -n kube-system calicoctl /calicoctl -- '" >> ~/.bash_aliases
+      fi
