@@ -34,6 +34,13 @@
       name: docker-ce
       update_cache: yes
 
+  # Save main user home path, used in the template
+  - name: Save logname (aka user) home as a variable
+    # https://stackoverflow.com/a/7359006
+    shell: >
+      echo $(getent passwd $SUDO_USER | cut -d: -f6)
+    register: logname_home
+
   - name: Define Docker daemon options
     # Read options from https://docs.docker.com/engine/reference/commandline/dockerd/#daemon-configuration-file
     template:
