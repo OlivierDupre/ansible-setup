@@ -4,8 +4,8 @@
   tasks:
   - name: Disable swap as it is mandatory for K8S installation
     shell: >
-      sed -i.bak '/swapfile/d' /etc/fstab
-      swapoff -a
+      sed -i.bak '/swapfile/d' /etc/fstab;
+      swapoff -a;
       exit
     # https://medium.com/@Alibaba_Cloud/how-to-install-and-deploy-kubernetes-on-ubuntu-16-04-6769fd1646db
   - name: Add K8S repository signing key
