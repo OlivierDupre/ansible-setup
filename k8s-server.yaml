@@ -23,5 +23,10 @@
     register: output
   - debug: var=output.stdout_lines
 
+  - name: Save logname (aka user) home as a variable
+    # https://stackoverflow.com/a/7359006
+    shell: > 
+      echo $(getent passwd $SUDO_USER | cut -d: -f6)
+    register: logname_home
   - name: Save kubeadm output
-    shell: echo {{ output.stdout_lines }} > ~/.kubeadm.init
+    shell: echo {{ output.stdout_lines }} >> {{ logname_home }}/.kubeadm.init
