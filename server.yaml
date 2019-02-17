@@ -3,3 +3,4 @@
 - import_playbook: server-removal.yaml
 - import_playbook: docker.yaml 
 - import_playbook: dev-setup.yaml
+- import_playbook: dev-setup.yaml
