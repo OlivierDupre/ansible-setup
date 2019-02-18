@@ -57,3 +57,9 @@
       exit 0
     register: output
   - debug: var=output.stdout_lines
+
+- hosts: master
+  become: yes
+  tasks:
+  - name: Add current user to VBox group to provide access to shared folders
+    shell: adduser $SUDO_USER vboxsf
