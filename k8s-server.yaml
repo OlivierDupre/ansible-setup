@@ -2,6 +2,8 @@
 - hosts: master
   become: yes
   tasks:
+  - name: test
+    shell: echo "{{ ansible_user_dir }} / {{ ansible_user_id }}" > /home/odupre/test
   - name: Disable swap as it is mandatory for K8S installation
     shell: >
       sed -i.bak '/swapfile/d' /etc/fstab;
