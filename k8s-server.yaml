@@ -47,13 +47,6 @@
       cp -i /etc/kubernetes/admin.conf "{{ logname_home.stdout }}"/.kube/config
       chown -R $SUDO_USER:$SUDO_USER "{{ logname_home.stdout }}/.kube"
       exit 0
-  # - name: Setup K8S config
-  #   copy:
-  #     src: /etc/kubernetes/admin.conf
-  #     dest: "{{ ansible_user_dir }}/.kube/config"
-  #     owner: "{{ ansible_user_id }}"
-  #     group: "{{ ansible_user_id }}"
-  #     mode: 0755
 
   - name: Install calico pod network add-on
     # https://kubernetes.io/docs/setup/independent/create-cluster-kubeadm/#pod-network
