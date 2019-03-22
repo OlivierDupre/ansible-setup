@@ -34,8 +34,22 @@
       echo $(getent passwd $SUDO_USER | cut -d: -f6);
       exit 0
     register: logname_home
+  - name: Setup local kubectl
+    file:
+      path: {{ logname_home.stdout }}/.kube
+      owner: {{ ansible_user_id }}
+      group: {{ ansible_user_id }}
+      state: directory
+      mode: 0755
+  - name: Copy Kube config
+    copy:
+      src: /etc/kubernetes/admin.conf
+      dest: {{ logname_home.stdout }}/.kube/config
+      owner: {{ ansible_user_id }}
+      group: {{ ansible_user_id }}
+      mode: 0644
   - name: Save kubeadm output
-    shell: echo "{{ output.stdout_lines }}" >> "{{ logname_home.stdout }}/.kubeadm.init"
+    shell: echo "{{ output.stdout_lines }}" >> "{{ logname_home.stdout }}/.kube/init.log"
 
   - name: Install calico pod network add-on
     # https://kubernetes.io/docs/setup/independent/create-cluster-kubeadm/#pod-network
