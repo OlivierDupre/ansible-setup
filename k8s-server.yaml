@@ -37,15 +37,20 @@
       group: "{{ ansible_user_id }}"
       state: directory
       mode: 0755
-  - name: Setup K8S config
-    copy:
-      src: /etc/kubernetes/admin.conf $HOME/.kube/config
-      dest: "{{ ansible_user_dir }}/.kube/config"
-      owner: "{{ ansible_user_id }}"
-      group: "{{ ansible_user_id }}"
-
   - name: Save kubeadm output
     shell: echo "{{ output.stdout_lines }}" >> "{{ ansible_user_dir }}/.kube/init.log"
+  - name: Setup K8S config
+    shell: |
+      cp -i /etc/kubernetes/admin.conf "{{ ansible_user_dir }}"/.kube/config
+      chown "{{ ansible_user_id }}":"{{ ansible_user_id }}" "{{ ansible_user_dir }}/.kube/config"
+      exit 0
+  # - name: Setup K8S config
+  #   copy:
+  #     src: /etc/kubernetes/admin.conf
+  #     dest: "{{ ansible_user_dir }}/.kube/config"
+  #     owner: "{{ ansible_user_id }}"
+  #     group: "{{ ansible_user_id }}"
+  #     mode: 0755
 
   - name: Install calico pod network add-on
     # https://kubernetes.io/docs/setup/independent/create-cluster-kubeadm/#pod-network
