@@ -34,6 +34,21 @@
       echo $(getent passwd $SUDO_USER | cut -d: -f6);
       exit 0
     register: logname_home
+
+  - name: Create folder for K8S config
+    file:
+      path: "{{ ansible_user_dir }}/.kube"
+      owner: "{{ ansible_user_id }}"
+      group: "{{ ansible_user_id }}"
+      state: directory
+      mode: 0755
+  - name: Setup K8S config
+    copy:
+      src: /etc/kubernetes/admin.conf $HOME/.kube/config
+      dest: "{{ ansible_user_dir }}/.kube/config"
+      owner: "{{ ansible_user_id }}"
+      group: "{{ ansible_user_id }}"
+
   - name: Save kubeadm output
     shell: echo "{{ output.stdout_lines }}" >> "{{ logname_home.stdout }}/.kubeadm.init"
 
