@@ -44,7 +44,7 @@
   - name: Install Snaps
     shell: |
       snap install fkill postman 
-      snap install vscode --classic  # Load config with extension Settings Sync. Github token store separated, privately in notes with Gist Id.
+      snap install vscode --classic  # Load config with extension Settings Sync. Github token store separately, privately in notes with Gist Id.
       snap install intellij-idea-community --classic
       snap install kata-containers --classic
       snap install google-cloud-sdk --classic
