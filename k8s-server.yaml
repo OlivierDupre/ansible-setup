@@ -25,7 +25,7 @@
       update_cache: yes
   - name: Setup K8S cluster
     shell: |
-      kubeadm init --pod-network-cidr=192.168.56.101/24
+      kubeadm init --pod-network-cidr=10.0.2.15/24
       exit 0
     register: output
   - debug: var=output.stdout_lines
