@@ -2,6 +2,8 @@
 - hosts: master
   become: yes
   tasks:
+  - name: test
+    shell: echo "{{ ansible_user_dir }} / {{ ansible_user_id }}" > /home/odupre/test
   - name: Disable swap as it is mandatory for K8S installation
     shell: >
       sed -i.bak '/swapfile/d' /etc/fstab;
@@ -23,16 +25,26 @@
       update_cache: yes
   - name: Setup K8S cluster
     shell: |
-      kubeadm init --pod-network-cidr=192.168.56.101/24
+      kubeadm init --pod-network-cidr=10.0.2.15/24
       exit 0
     register: output
   - debug: var=output.stdout_lines
 
-  - name: Save logname (aka user) home as a variable
-    # https://stackoverflow.com/a/7359006
+  - name: Create folder for K8S config
+    file:
+      path: "{{ ansible_user_dir }}/.kube"
+      owner: "{{ ansible_user_id }}"
+      group: "{{ ansible_user_id }}"
+      state: directory
+      mode: 0755
+  - name: Save kubeadm output
+    shell: echo "{{ output.stdout_lines }}" >> "{{ ansible_user_dir }}/.kube/init.log"
+  - name: Setup K8S config
     shell: |
-      echo $(getent passwd $SUDO_USER | cut -d: -f6);
+      cp -i /etc/kubernetes/admin.conf "{{ ansible_user_dir }}"/.kube/config
+      chown "{{ ansible_user_id }}":"{{ ansible_user_id }}" "{{ ansible_user_dir }}/.kube/config"
       exit 0
+<<<<<<< HEAD
     register: logname_home
   - name: Setup local kubectl
     file:
@@ -50,6 +62,15 @@
       mode: 0644
   - name: Save kubeadm output
     shell: echo "{{ output.stdout_lines }}" >> "{{ logname_home.stdout }}/.kube/init.log"
+=======
+  # - name: Setup K8S config
+  #   copy:
+  #     src: /etc/kubernetes/admin.conf
+  #     dest: "{{ ansible_user_dir }}/.kube/config"
+  #     owner: "{{ ansible_user_id }}"
+  #     group: "{{ ansible_user_id }}"
+  #     mode: 0755
+>>>>>>> 61471fe0b43a9961b57e7a9db405ad3b2c038fa0
 
   - name: Install calico pod network add-on
     # https://kubernetes.io/docs/setup/independent/create-cluster-kubeadm/#pod-network
@@ -58,7 +79,7 @@
     # * watch kubectl get pods --all-namespaces
     # * calicoctl get profiles -o wide
     shell: >
-      kubectl apply -f k8s etcd.yaml calico.yaml calicoctl.yaml
+      kubectl apply -f k8s/etcd.yaml k8S/calico.yaml k8s/calicoctl.yaml
       kubectl taint nodes --all node-role.kubernetes.io/master-
 
       if [ ! -f ~/.bash_aliases ]; then

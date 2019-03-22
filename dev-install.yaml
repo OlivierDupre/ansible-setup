@@ -7,6 +7,11 @@
       name: ['git','git-extras','wget','curl','tilix','vim','apt-transport-https','ca-certificates','software-properties-common','build-essential','libssl-dev','htop','tree','make','libc6-i386','lib32z1','libc6','python','python-pip','python-dev','libssl-dev','libcurl4-gnutls-dev','libexpat1-dev','unzip','python-lxml','g++','asciinema','gnupg-agent','snapd']
       update_cache: yes
       state: latest
+  - name: Install eg
+    shell: |
+      git clone https://github.com/srsudar/eg /opt/eg
+      ln -s /opt/eg/eg_exec.py /usr/local/bin/eg      
+      exit 0
 
 - hosts: all
   tasks:
@@ -39,8 +44,12 @@
   - name: Install Snaps
     shell: |
       snap install fkill postman 
-      snap install vscode --classic  # Load config with extension Settings Sync. Github token store separated, privately in notes with Gist Id.
+      snap install vscode --classic  # Load config with extension Settings Sync. Github token store separately, privately in notes with Gist Id.
       snap install intellij-idea-community --classic
       snap install kata-containers --classic
       snap install google-cloud-sdk --classic
       snap install aws-cli --classic
+  - name: Install draw.io
+    shell: curl -L https://github.com/jgraph/drawio-desktop/releases/download/v9.3.1/draw.io-amd64-9.3.1.deb -o /tmp/draw.io-amd64-9.3.1.deb  
+      && sudo dpkg -i /tmp/draw.io-amd64-9.3.1.deb 
+      && rm /tmp/draw.io-amd64-9.3.1.deb
