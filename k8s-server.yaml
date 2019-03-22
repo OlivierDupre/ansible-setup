@@ -28,13 +28,6 @@
     register: output
   - debug: var=output.stdout_lines
 
-  - name: Save logname (aka user) home as a variable
-    # https://stackoverflow.com/a/7359006
-    shell: |
-      echo $(getent passwd $SUDO_USER | cut -d: -f6);
-      exit 0
-    register: logname_home
-
   - name: Create folder for K8S config
     file:
       path: "{{ ansible_user_dir }}/.kube"
@@ -50,7 +43,7 @@
       group: "{{ ansible_user_id }}"
 
   - name: Save kubeadm output
-    shell: echo "{{ output.stdout_lines }}" >> "{{ logname_home.stdout }}/.kubeadm.init"
+    shell: echo "{{ output.stdout_lines }}" >> "{{ ansible_user_dir }}/.kube/init.log"
 
   - name: Install calico pod network add-on
     # https://kubernetes.io/docs/setup/independent/create-cluster-kubeadm/#pod-network
@@ -59,7 +52,7 @@
     # * watch kubectl get pods --all-namespaces
     # * calicoctl get profiles -o wide
     shell: >
-      kubectl apply -f k8s etcd.yaml calico.yaml calicoctl.yaml
+      kubectl apply -f k8s/etcd.yaml k8S/calico.yaml k8s/calicoctl.yaml
       kubectl taint nodes --all node-role.kubernetes.io/master-
 
       if [ ! -f ~/.bash_aliases ]; then
