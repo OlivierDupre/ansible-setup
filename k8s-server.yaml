@@ -10,6 +10,11 @@
       swapoff -a;
       exit
     # https://medium.com/@Alibaba_Cloud/how-to-install-and-deploy-kubernetes-on-ubuntu-16-04-6769fd1646db
+  - name: Save logname (aka user) home as a variable
+    # https://stackoverflow.com/a/7359006
+    shell: > 
+      echo $(getent passwd $SUDO_USER | cut -d: -f6)
+    register: logname_home
   - name: Add K8S repository signing key
     apt_key:
       url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
@@ -32,37 +37,16 @@
 
   - name: Create folder for K8S config
     file:
-      path: "{{ ansible_user_dir }}/.kube"
-      owner: "{{ ansible_user_id }}"
-      group: "{{ ansible_user_id }}"
+      path: "{{ logname_home }}/.kube"
       state: directory
       mode: 0755
-  - name: Save kubeadm output
-    shell: echo "{{ output.stdout_lines }}" >> "{{ ansible_user_dir }}/.kube/init.log"
-  - name: Setup K8S config
-    shell: |
-      cp -i /etc/kubernetes/admin.conf "{{ ansible_user_dir }}"/.kube/config
-      chown "{{ ansible_user_id }}":"{{ ansible_user_id }}" "{{ ansible_user_dir }}/.kube/config"
-      exit 0
-<<<<<<< HEAD
-    register: logname_home
-  - name: Setup local kubectl
-    file:
-      path: {{ logname_home.stdout }}/.kube
-      owner: {{ ansible_user_id }}
-      group: {{ ansible_user_id }}
-      state: directory
-      mode: 0755
-  - name: Copy Kube config
-    copy:
-      src: /etc/kubernetes/admin.conf
-      dest: {{ logname_home.stdout }}/.kube/config
-      owner: {{ ansible_user_id }}
-      group: {{ ansible_user_id }}
-      mode: 0644
   - name: Save kubeadm output
     shell: echo "{{ output.stdout_lines }}" >> "{{ logname_home.stdout }}/.kube/init.log"
-=======
+  - name: Setup K8S config
+    shell: |
+      cp -i /etc/kubernetes/admin.conf "{{ logname_home.stdout }}"/.kube/config
+      chown -R $SUDO_USER:$SUDO_USER "{{ logname_home.stdout }}/.kube"
+      exit 0
   # - name: Setup K8S config
   #   copy:
   #     src: /etc/kubernetes/admin.conf
@@ -70,7 +54,6 @@
   #     owner: "{{ ansible_user_id }}"
   #     group: "{{ ansible_user_id }}"
   #     mode: 0755
->>>>>>> 61471fe0b43a9961b57e7a9db405ad3b2c038fa0
 
   - name: Install calico pod network add-on
     # https://kubernetes.io/docs/setup/independent/create-cluster-kubeadm/#pod-network
@@ -107,4 +90,3 @@
       # Use:
       # * Token value output with following command:
       # * kubectl -n kube-system describe secret $(kubectl -n kube-system get secret | grep admin-user | awk '{print $1}') 
-
