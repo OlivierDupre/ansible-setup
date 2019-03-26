@@ -1,0 +1,33 @@
+---
+- hosts: all
+  become: yes
+  tasks:
+  - name: Disable swap as it is mandatory for K8S installation
+    shell: >
+      sed -i.bak '/swapfile/d' /etc/fstab;
+      swapoff -a;
+      exit
+    # https://medium.com/@Alibaba_Cloud/how-to-install-and-deploy-kubernetes-on-ubuntu-16-04-6769fd1646db
+  - name: Save logname (aka user) home as a variable
+    # https://stackoverflow.com/a/7359006
+    shell: > 
+      echo $(getent passwd $SUDO_USER | cut -d: -f6)
+    register: logname_home
+  - name: Add K8S repository signing key
+    apt_key:
+      url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
+      state: present 
+  - name: Add K8S repository
+    apt_repository:
+      repo: deb http://apt.kubernetes.io/ kubernetes-xenial main
+      state: present
+  - name: Install kubelet & kubeadm
+    apt:
+      name: ['kubelet','kubeadm']
+      state: latest
+      update_cache: yes
+  - name: Create folder for K8S config
+    file:
+      path: "{{ logname_home.stdout }}/.kube"
+      state: directory
+      mode: 0755

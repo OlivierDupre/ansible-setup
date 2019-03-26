@@ -1,0 +1,42 @@
+---
+- hosts: master
+  tasks:
+  - name: Install calico pod network add-on
+    # https://kubernetes.io/docs/setup/independent/create-cluster-kubeadm/#pod-network
+    # https://docs.projectcalico.org/v3.5/usage/calicoctl/install
+    # Enjoy running:
+    # * watch kubectl get pods --all-namespaces
+    # * calicoctl get profiles -o wide
+    shell: |
+      kubectl apply -f "{{ playbook_dir }}/k8s/etcd.yaml" ;
+      kubectl apply -f "{{ playbook_dir }}/k8s/calico.yaml";
+      kubectl apply -f "{{ playbook_dir }}/k8s/calicoctl.yaml";
+      # sleep 10
+      # kubectl taint nodes --all node-role.kubernetes.io/master-
+
+      if [ ! -f ~/.bash_aliases ]; then
+        touch ~/.bash_aliases
+      fi
+
+      nb_definitions=`grep 'calicoctl=' ~/.bash_aliases | wc -l`
+      if [ $nb_definitions -eq 0 ]; then
+        echo "alias calicoctl='kubectl exec -i -n kube-system calicoctl /calicoctl -- '" >> ~/.bash_aliases
+      fi
+
+      exit O
+
+  - name: Install Kubernetes Dashboard
+    # https://kubernetes.io/docs/concepts/cluster-administration/addons/#visualization-amp-control
+    # https://github.com/kubernetes/dashboard#kubernetes-dashboard
+    shell: |
+      kubectl apply -f "{{ playbook_dir }}/k8s/kubernetes-dashboard.yaml" ;
+      kubectl apply -f "{{ playbook_dir }}/k8s/dashboard-admin-user.yaml" ;
+      nohup kubectl proxy &
+      exit 0
+      # Run
+      # * kubectl proxy
+      # Navigate to:
+      # * http://localhost:8001/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/
+      # Use:
+      # * Token value output with following command:
+      # * kubectl -n kube-system describe secret $(kubectl -n kube-system get secret | grep admin-user | awk '{print $1}') 
