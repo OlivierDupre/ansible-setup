@@ -2,84 +2,17 @@
 - hosts: master
   become: yes
   tasks:
-  - name: test
-    shell: echo "{{ ansible_user_dir }} / {{ ansible_user_id }}" > /home/odupre/test
-  - name: Disable swap as it is mandatory for K8S installation
-    shell: >
-      sed -i.bak '/swapfile/d' /etc/fstab;
-      swapoff -a;
-      exit
-    # https://medium.com/@Alibaba_Cloud/how-to-install-and-deploy-kubernetes-on-ubuntu-16-04-6769fd1646db
-  - name: Save logname (aka user) home as a variable
-    # https://stackoverflow.com/a/7359006
-    shell: > 
-      echo $(getent passwd $SUDO_USER | cut -d: -f6)
-    register: logname_home
-  - name: Add K8S repository signing key
-    apt_key:
-      url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
-      state: present 
-  - name: Add K8S repository
-    apt_repository:
-      repo: deb http://apt.kubernetes.io/ kubernetes-xenial main
-      state: present
-  - name: Install kubelet & kubeadm
-    apt:
-      name: ['kubelet','kubeadm']
-      state: latest
-      update_cache: yes
   - name: Setup K8S cluster
     shell: |
-      kubeadm init --pod-network-cidr=10.0.2.15/24
+      kubeadm init --pod-network-cidr=192.168.56.101/24
       exit 0
     register: output
   - debug: var=output.stdout_lines
 
-  - name: Create folder for K8S config
-    file:
-      path: "{{ logname_home }}/.kube"
-      state: directory
-      mode: 0755
   - name: Save kubeadm output
     shell: echo "{{ output.stdout_lines }}" >> "{{ logname_home.stdout }}/.kube/init.log"
   - name: Setup K8S config
     shell: |
-      cp -i /etc/kubernetes/admin.conf "{{ logname_home.stdout }}"/.kube/config
-      chown -R $SUDO_USER:$SUDO_USER "{{ logname_home.stdout }}/.kube"
+      cp -i /etc/kubernetes/admin.conf "{{ logname_home.stdout }}"/.kube/config;
+      chown -R $SUDO_USER:$SUDO_USER "{{ logname_home.stdout }}/.kube";
       exit 0
-
-  - name: Install calico pod network add-on
-    # https://kubernetes.io/docs/setup/independent/create-cluster-kubeadm/#pod-network
-    # https://docs.projectcalico.org/v3.5/usage/calicoctl/install
-    # Enjoy running:
-    # * watch kubectl get pods --all-namespaces
-    # * calicoctl get profiles -o wide
-    shell: >
-      kubectl apply -f k8s/etcd.yaml k8S/calico.yaml k8s/calicoctl.yaml
-      kubectl taint nodes --all node-role.kubernetes.io/master-
-
-      if [ ! -f ~/.bash_aliases ]; then
-        touch ~/.bash_aliases
-      fi
-
-      nb_definitions=`grep 'calicoctl=' ~/.bash_aliases | wc -l`
-      if [ $nb_definitions -eq 0 ]; then
-        echo "alias calicoctl='kubectl exec -i -n kube-system calicoctl /calicoctl -- '" >> ~/.bash_aliases
-      fi
-
-      exit O
-
-  - name: Install Kubernetes Dashboard
-    # https://kubernetes.io/docs/concepts/cluster-administration/addons/#visualization-amp-control
-    # https://github.com/kubernetes/dashboard#kubernetes-dashboard
-    shell: >
-      kubectl apply -f k8s/kubernetes-dashboard.yaml k8s/dashboard-admin-user.yaml
-      nohup kubectl proxy &
-      exit 0
-      # Run
-      # * kubectl proxy
-      # Navigate to:
-      # * http://localhost:8001/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/
-      # Use:
-      # * Token value output with following command:
-      # * kubectl -n kube-system describe secret $(kubectl -n kube-system get secret | grep admin-user | awk '{print $1}') 
