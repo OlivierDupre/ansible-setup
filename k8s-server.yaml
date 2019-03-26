@@ -16,3 +16,5 @@
       cp -i /etc/kubernetes/admin.conf "{{ logname_home.stdout }}"/.kube/config;
       chown -R $SUDO_USER:$SUDO_USER "{{ logname_home.stdout }}/.kube";
       exit 0
+  - name: Install Tiller
+    shell: helm init
