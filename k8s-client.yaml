@@ -1,8 +1,21 @@
 ---
-- hosts: nodes
+- hosts: master
   become: yes
   tasks:
-  - name: Join nodes
+  - name: Save logname (aka user) home as a variable
+    # https://stackoverflow.com/a/7359006
+    shell: > 
+      echo $(getent passwd $SUDO_USER | cut -d: -f6)
+    register: logname_home
+  - name: Save join nodes command
     shell: >
-     kubeadm join <master-ip>:<master-port> --token <token> --discovery-token-ca-cert-hash sha256:<hash>
-     exit 0
+      sed -i.bak s/u\'/\\n/g "{{ logname_home.stdout }}/.kube/init.log"
+      sed -i.bak s/\'\]/\\n/g "{{ logname_home.stdout }}/.kube/init.log"
+      echo "#!/bin/bash" > "{{ logname_home.stdout }}/.kube/join.sh"
+      awk '/kubeadm join/'  "{{ logname_home.stdout }}/.kube/init.log" >> "{{ logname_home.stdout }}/.kube/join.sh"
+      exit 0
+
+- hosts: nodes
+  tasks:
+    - name: Join nodes to master
+      script: "{{ logname_home.stdout }}/.kube/join.sh"
