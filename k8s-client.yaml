@@ -9,13 +9,20 @@
     register: logname_home
   - name: Save join nodes command
     shell: >
-      sed -i.bak s/u\'/\\n/g "{{ logname_home.stdout }}/.kube/init.log"
-      sed -i.bak s/\'\]/\\n/g "{{ logname_home.stdout }}/.kube/init.log"
-      echo "#!/bin/bash" > "{{ logname_home.stdout }}/.kube/join.sh"
-      awk '/kubeadm join/'  "{{ logname_home.stdout }}/.kube/init.log" >> "{{ logname_home.stdout }}/.kube/join.sh"
+      kubeadm token create --print-join-command > "{{ logname_home.stdout }}/.kube/join.sh";
+      chown $SUDO_USER:$SUDO_USER "{{ logname_home.stdout }}/.kube/join.sh";
+      chmod u+x "{{ logname_home.stdout }}/.kube/join.sh";
       exit 0
+  - name: Save Join script path
+    set_fact: join_script_path="{{ logname_home.stdout }}/.kube/join.sh"
 
 - hosts: nodes
+  become: yes
   tasks:
+    - debug: 
+        msg="{{ hostvars[item]['join_script_path'] }}"
+      with_items: "{{ groups['master'] }}"
+
     - name: Join nodes to master
-      script: "{{ logname_home.stdout }}/.kube/join.sh"
+      script: "{{ hostvars[item]['join_script_path'] }}"
+      with_items: "{{ groups['master'] }}"
