@@ -8,3 +8,4 @@
 - import_playbook: k8s-client.yaml
 - import_playbook: k8s-calico.yaml
 - import_playbook: k8s-dashboard.yaml
+- import_playbook: k8s-helm.yaml
