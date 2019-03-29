@@ -7,26 +7,39 @@
     shell: > 
       echo $(getent passwd $SUDO_USER | cut -d: -f6)
     register: logname_home
+  - name: Echo logname home
+    debug: 
+      msg="{{ logname_home.stdout }}" 
+    with_items: "{{ groups['master'] }}"
   - name: Delete K8S cluster
     shell: |
       kubeadm reset -f;
       rm -Rf "{{ logname_home.stdout }}/.kube/*";
       exit 0
     register: output
-  - debug: 
+  - name: Echo Master[0] IP
+    debug: 
       msg="{{ hostvars[item]["groups"]["master"][0] }}" 
     with_items: "{{ groups['master'] }}"
+  - name: Echo logname
+    debug: 
+      msg="{{ hostvars[item]["ansible_facts"]["env"]["LOGNAME"] }}" 
+    with_items: "{{ groups['master'] }}"
   - name: Setup K8S cluster
-    shell: |
-      kubeadm init --pod-network-cidr=192.168.56.0/24;
-      exit 0
+    shell: kubeadm init --pod-network-cidr=192.168.56.0/24 --apiserver-advertise-address=192.168.56.107
     register: output
   - debug: var=output.stdout_lines
 
   - name: Save kubeadm output
     shell: echo "{{ output.stdout_lines }}" > "{{ logname_home.stdout }}"/.kube/init.log
-  - name: Setup K8S config
-    shell: |
-      cp -i /etc/kubernetes/admin.conf "{{ logname_home.stdout }}/.kube/config";
-      chown -R $SUDO_USER:$SUDO_USER "{{ logname_home.stdout }}/.kube";
-      exit 0
+  # - name: Copy K8S config
+  #   # shell: cp -i /etc/kubernetes/admin.conf "{{ logname_home.stdout }}/.kube/config"
+  #   copy:
+  #     src: /etc/kubernetes/admin.conf
+  #     dest: "{{ logname_home.stdout }}/.kube/config"
+  #     owner: "{{ hostvars[item]['ansible_facts']['env']['LOGNAME'] }}" 
+  #     group: "{{ hostvars[item]['ansible_facts']['env']['LOGNAME'] }}" 
+  #     mode: 0644
+  #   with_items: "{{ groups['master'] }}"
+  - name: Change K8S config ownership
+    shell: chown -R $SUDO_USER:$SUDO_USER "{{ logname_home.stdout }}/.kube"
