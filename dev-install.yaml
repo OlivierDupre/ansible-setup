@@ -9,9 +9,21 @@
       state: latest
   - name: Install eg
     shell: |
-      git clone https://github.com/srsudar/eg /opt/eg
-      ln -s /opt/eg/eg_exec.py /usr/local/bin/eg      
+      git clone https://github.com/srsudar/eg /opt/eg;
+      ln -s /opt/eg/eg_exec.py /usr/local/bin/eg;
+
+      if [ ! -f ~/.bash_aliases ]; then
+        touch ~/.bash_aliases
+      fi
+
+      nb_definitions=`grep 'woman=' ~/.bash_aliases | wc -l`
+      if [ $nb_definitions -eq 0 ]; then
+        echo "alias woman='eg'" >> ~/.bash_aliases
+      fi  
+
       exit 0
+  - name: Install Calicoctl
+    shell: curl -O -L  https://github.com/projectcalico/calicoctl/releases/download/v3.6.1/calicoctl -o /bin/bash/calicoctl
 
 - hosts: all
   tasks:
