@@ -12,17 +12,3 @@
     shell: kubectl apply -f "{{ playbook_dir }}/k8s/calico.yaml"
   - name: Untaint master
     shell: sh kubectl taint nodes --all node-role.kubernetes.io/master- 2> /dev/null; exit 0
-  # - name: Install calicoctl add-on
-  #   shell: |
-  #     kubectl apply -f "{{ playbook_dir }}/k8s/calicoctl.yaml";
-
-  #     if [ ! -f ~/.bash_aliases ]; then
-  #       touch ~/.bash_aliases
-  #     fi
-
-  #     nb_definitions=`grep 'calicoctl=' ~/.bash_aliases | wc -l`
-  #     if [ $nb_definitions -eq 0 ]; then
-  #       echo "alias calicoctl='kubectl exec -i -n kube-system calicoctl /calicoctl -- '" >> ~/.bash_aliases
-  #     fi
-
-  #     exit O
