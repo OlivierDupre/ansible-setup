@@ -10,7 +10,7 @@
   - name: Delete K8S cluster
     shell: |
       kubeadm reset -f;
-      rm -f "{{ logname_home.stdout }}/.kube/init.log {{ logname_home.stdout }}/.kube/config";
+      rm -Rf "{{ logname_home.stdout }}/.kube/*";
       exit 0
     register: output
   - debug: 
