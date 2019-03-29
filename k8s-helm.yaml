@@ -1,0 +1,7 @@
+---
+- hosts: master
+  tasks:
+  - name: Wait while the platform is up and running
+    shell: sleep 60
+  - name: Install Tiller
+    shell: helm init

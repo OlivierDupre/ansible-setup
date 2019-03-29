@@ -3,6 +3,8 @@
 - import_playbook: server-removal.yaml
 - import_playbook: docker.yaml 
 - import_playbook: dev-setup.yaml
+- import_playbook: k8s.yaml
 - import_playbook: k8s-server.yaml
+- import_playbook: k8s-client.yaml
 - import_playbook: k8s-calico.yaml
 - import_playbook: k8s-dashboard.yaml

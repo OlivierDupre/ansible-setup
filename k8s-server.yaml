@@ -2,19 +2,28 @@
 - hosts: master
   become: yes
   tasks:
+  - name: Save logname (aka user) home as a variable
+    # https://stackoverflow.com/a/7359006
+    shell: > 
+      echo $(getent passwd $SUDO_USER | cut -d: -f6)
+    register: logname_home
+  - name: Delete K8S cluster
+    shell: |
+      kubeadm reset -f;
+      rm -f "{{ logname_home.stdout }}/.kube/init.log {{ logname_home.stdout }}/.kube/config";
+      exit 0
+    register: output
   - name: Setup K8S cluster
     shell: |
-      kubeadm init --pod-network-cidr=192.168.56.101/24
+      kubeadm init --pod-network-cidr=192.168.56.101/24;
       exit 0
     register: output
   - debug: var=output.stdout_lines
 
   - name: Save kubeadm output
-    shell: echo "{{ output.stdout_lines }}" >> "{{ logname_home.stdout }}/.kube/init.log"
+    shell: echo "{{ output.stdout_lines }}" > "{{ logname_home.stdout }}"/.kube/init.log
   - name: Setup K8S config
     shell: |
-      cp -i /etc/kubernetes/admin.conf "{{ logname_home.stdout }}"/.kube/config;
+      cp -i /etc/kubernetes/admin.conf "{{ logname_home.stdout }}/.kube/config";
       chown -R $SUDO_USER:$SUDO_USER "{{ logname_home.stdout }}/.kube";
       exit 0
-  - name: Install Tiller
-    shell: helm init
