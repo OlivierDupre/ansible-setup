@@ -4,4 +4,6 @@
   - name: Wait while the platform is up and running
     shell: sleep 60
   - name: Install Tiller
-    shell: helm init
+    shell: helm init --history-max 200 --upgrade
+  - name: Update helm repos
+    shell: helm repo update
