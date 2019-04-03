@@ -3,7 +3,13 @@
   tasks:
   - name: Wait while the platform is up and running
     shell: sleep 60
+  - name: Create a kube Service Account dedicated to tiller
+    shell: |
+      kubectl create serviceaccount --namespace kube-system tiller;
+      kubectl create clusterrolebinding tiller-cluster-rule --clusterrole=cluster-admin --serviceaccount=kube-system:tiller;
+      kubectl patch deploy --namespace kube-system tiller-deploy -p '{"spec":{"template":{"spec":{"serviceAccount":"tiller"}}}}';
+      exit 0;
   - name: Install Tiller
-    shell: helm init --history-max 200 --upgrade
+    shell: helm init --history-max 200  --service-account tiller --upgrade
   - name: Update helm repos
     shell: helm repo update
