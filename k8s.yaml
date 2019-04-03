@@ -31,3 +31,16 @@
       path: "{{ logname_home.stdout }}/.kube"
       state: directory
       mode: 0755
+  - name: Add K8S aliases
+    copy:
+      src: k8s_aliases
+      dest: "{{ logname_home.stdout }}/.k8s_aliases"
+  - name: Load K8S aliases
+    shell: |
+      nb_definitions=`grep k8s_aliases ~/.bash_aliases | wc -l`
+      if [ $nb_definitions -eq 0 ]; then
+        echo "if [ -f ~/.k8s_aliases ]; then"  >> ~/.bash_aliases
+        echo "  . ~/.k8s_aliases"  >> ~/.bash_aliases
+        echo "fi"  >> ~/.bash_aliases
+      fi
+      exit 0
