@@ -1,89 +1,126 @@
 ---
-- hosts: all
-  tasks:
-  - name: Setup Git
-    shell: |
-      git alias st status
-      git alias ci commit
-      git alias co checkout
-      git alias lg "log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit"
-      exit 0
+# - hosts: all
+#   tasks:
+#   - name: Setup Git
+#     shell: |
+#       git alias st status
+#       git alias ci commit
+#       git alias co checkout
+#       git alias lg "log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit"
+#       exit 0
 
-  - name: Setup VIM as default editor
-    shell: |
-      if [ -f ~/.bash_aliases ]; then
-        nb_definitions=`grep vim ~/.bash_aliases | wc -l`
-        if [ ! $nb_definitions -eq 0 ]; then
-          echo "VIM as default editor already defined"
-          exit 0
-        fi
-      fi
+#   - name: Setup VIM as default editor
+#     shell: |
+#       if [ -f ~/.bash_aliases ]; then
+#         nb_definitions=`grep vim ~/.bash_aliases | wc -l`
+#         if [ ! $nb_definitions -eq 0 ]; then
+#           echo "VIM as default editor already defined"
+#           exit 0
+#         fi
+#       fi
 
-      echo 'export VISUAL=vim' >> ~/.bash_aliases
-      echo 'export EDITOR="$VISUAL"' >> ~/.bash_aliases
-      exit 0
+#       echo 'export VISUAL=vim' >> ~/.bash_aliases
+#       echo 'export EDITOR="$VISUAL"' >> ~/.bash_aliases
+#       exit 0
 
-  - name: Create ssh-keygen if it does not already exist
-    shell: |
-      if [ ! -f ~/.ssh/id_rsa ]; then
-        ssh-keygen -t rsa -q -N ''
-      fi
-      exit 0
-    args:
-      executable: /bin/bash
+#   - name: Create ssh-keygen if it does not already exist
+#     shell: |
+#       if [ ! -f ~/.ssh/id_rsa ]; then
+#         ssh-keygen -t rsa -q -N ''
+#       fi
+#       exit 0
+#     args:
+#       executable: /bin/bash
 
-  - name: Create common aliases
-    shell: |
-      if [ ! -f ~/.bash_aliases ]; then
-        touch ~/.bash_aliases
-      fi
+#   - name: Create common aliases
+#     shell: |
+#       if [ ! -f ~/.bash_aliases ]; then
+#         touch ~/.bash_aliases
+#       fi
 
-      nb_definitions=`grep 'll=' ~/.bash_aliases | wc -l`
-      if [ $nb_definitions -eq 0 ]; then
-        echo "alias ll='ls -alhF'" >> ~/.bash_aliases
-      fi
+#       nb_definitions=`grep 'll=' ~/.bash_aliases | wc -l`
+#       if [ $nb_definitions -eq 0 ]; then
+#         echo "alias ll='ls -alhF'" >> ~/.bash_aliases
+#       fi
     
-      nb_definitions=`grep ansible ~/.bash_aliases | wc -l`
+#       nb_definitions=`grep ansible ~/.bash_aliases | wc -l`
+#       if [ $nb_definitions -eq 0 ]; then
+#         echo "alias ap='ansible-playbook'" >> ~/.bash_aliases
+#         echo "alias apb='ansible-playbook --ask-become-pass'" >> ~/.bash_aliases
+#       fi
+
+#       exit 0
+#     register: output
+#   - debug: var=output.stdout_lines
+
+# - hosts: master
+#   become: yes
+#   tasks:
+#   - name: Add current user to VBox group to provide access to shared folders
+#     shell: adduser $SUDO_USER vboxsf
+
+- hosts: master
+  tasks:
+  - name: Source kubectl completion
+    shell: |
+      nb_definitions=`grep 'kubectl completion' ~/.bashrc | wc -l`
       if [ $nb_definitions -eq 0 ]; then
-        echo "alias ap='ansible-playbook'" >> ~/.bash_aliases
-        echo "alias apb='ansible-playbook --ask-become-pass'" >> ~/.bash_aliases
+        echo "source <(kubectl completion bash)" ~/.bashrc
+        echo "source <(kubectl completion bash | sed s/kubectl/k/g)" ~/.bashrc
       fi
 
       exit 0
-    register: output
-  - debug: var=output.stdout_lines
-
-- hosts: master
-  become: yes
-  tasks:
-  - name: Add current user to VBox group to provide access to shared folders
-    shell: adduser $SUDO_USER vboxsf
-
-- hosts: master
-  tasks:
   - name: Download git prompt
     git:
       repo: 'https://github.com/OlivierDupre/bash-git-prompt.git'
-      dest: ~/.bash-git-prompt
+      dest: ~/prompt/bash-git-prompt
       depth: 1
   - name: Define gitprompt options
     copy:
       src: gitprompt
-      dest: "~/.gitprompt"
+      dest: "~/prompt/bash-git-prompt/custom-gitprompt.sh"
   - name: Source gitprompt
     shell: |
-      nb_definitions=`grep 'gitprompt' ~/.bashrc | wc -l`
+      nb_definitions=`grep 'custom-gitprompt' ~/.bashrc | wc -l`
       if [ $nb_definitions -eq 0 ]; then
-        echo "source ~/.gitprompt" >> ~/.bashrc
+        echo "source ~/prompt/bash-git-prompt/custom-gitprompt.sh" >> ~/.bashrc
       fi  
 
       exit 0
-  - name: Source kubectl completion
+  - name: Download Polyglot prompt
+    git:
+      repo: 'https://github.com/agkozak/polyglot.git'
+      dest: ~/prompt/polyglot
+      depth: 1
+  - name: Source gitprompt
     shell: |
-      nb_definitions=`grep 'gitprompt' ~/.bashrc | wc -l`
+      nb_definitions=`grep 'polyglot' ~/.bashrc | wc -l`
       if [ $nb_definitions -eq 0 ]; then
-        source <(kubectl completion bash)
-        source <(kubectl completion bash | sed s/kubectl/k/g)
-      fi
+        echo "source ~/prompt/polyglot/polyglot.sh" >> ~/.bashrc
+      fi  
 
       exit 0
+  - name: Add a new PS1 dedicated to Kubernetes
+    shell: |
+      if [ ! \( -e ~/.kube/prompt \) ]; then 
+        git clone https://github.com/jonmosco/kube-ps1.git ~/.kube/prompt;
+        nb_definitions=`grep 'kube-ps1.sh' ~/.bashrc | wc -l`
+        if [ $nb_definitions -eq 0 ]; then
+          echo "source ~/.kube/prompt/kube-ps1.sh" >> ~/.bashrc
+        fi 
+      fi
+      exit 0
+  - name: Download Polyglot-Kube-ps1 prompt
+    git:
+      repo: 'https://github.com/agkozak/polyglot-kube-ps1.git'
+      dest: ~/prompt/polyglot-kube-ps1
+      depth: 1
+  - name: Source polyglot-kube-ps1
+    shell: |
+      nb_definitions=`grep 'polyglot-kube-ps1' ~/.bashrc | wc -l`
+      if [ $nb_definitions -eq 0 ]; then
+        echo "source ~/prompt/polyglot-kube-ps1/polyglot-kube-ps1.sh" >> ~/.bashrc
+      fi  
+
+      exit 0
+
