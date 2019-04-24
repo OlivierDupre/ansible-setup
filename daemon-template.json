@@ -6,5 +6,6 @@
       "max-size": "100m"
     },
     "storage-driver": "overlay2",
-    "data-root": "{{ logname_home.stdout }}/docker/images"
+    "data-root": "{{ logname_home.stdout }}/docker/images",
+    "experimental": true
 }

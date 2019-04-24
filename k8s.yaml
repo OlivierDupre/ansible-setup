@@ -21,9 +21,9 @@
     apt_repository:
       repo: deb http://apt.kubernetes.io/ kubernetes-xenial main
       state: present
-  - name: Install kubelet & kubeadm
+  - name: Install kubelet, kubeadm && kubectl
     apt:
-      name: ['kubelet','kubeadm']
+      name: ['kubelet','kubeadm','kubectl']
       state: latest
       update_cache: yes
   - name: Create folder for K8S config
