@@ -1,52 +1,52 @@
 ---
-- hosts: all
-  become: yes
-  tasks:
-  - name: Install base packages
-    apt:
-      name: ['git','git-extras','wget','curl','tilix','vim','apt-transport-https','ca-certificates','software-properties-common','build-essential','libssl-dev','htop','tree','make','libc6-i386','lib32z1','libc6','python','python-pip','python3-pip','python-dev','libssl-dev','libcurl4-gnutls-dev','libexpat1-dev','unzip','python-lxml','g++','asciinema','gnupg-agent','snapd','apache2-utils']
-      update_cache: yes
-      state: latest
-  - name: Install eg
-    shell: |
-      git clone https://github.com/srsudar/eg /opt/eg;
-      ln -s /opt/eg/eg_exec.py /usr/local/bin/eg;
+# - hosts: all
+#   become: yes
+#   tasks:
+#   - name: Install base packages
+#     apt:
+#       name: ['git','git-extras','wget','curl','tilix','vim','apt-transport-https','ca-certificates','software-properties-common','build-essential','libssl-dev','htop','tree','make','libc6-i386','lib32z1','libc6','python','python-pip','python3-pip','python-dev','libssl-dev','libcurl4-gnutls-dev','libexpat1-dev','unzip','python-lxml','g++','asciinema','gnupg-agent','snapd','apache2-utils']
+#       update_cache: yes
+#       state: latest
+#   - name: Install eg
+#     shell: |
+#       git clone https://github.com/srsudar/eg /opt/eg;
+#       ln -s /opt/eg/eg_exec.py /usr/local/bin/eg;
 
-      if [ ! -f ~/.bash_aliases ]; then
-        touch ~/.bash_aliases
-      fi
+#       if [ ! -f ~/.bash_aliases ]; then
+#         touch ~/.bash_aliases
+#       fi
 
-      nb_definitions=`grep 'woman=' ~/.bash_aliases | wc -l`
-      if [ $nb_definitions -eq 0 ]; then
-        echo "alias woman='eg'" >> ~/.bash_aliases
-      fi  
+#       nb_definitions=`grep 'woman=' ~/.bash_aliases | wc -l`
+#       if [ $nb_definitions -eq 0 ]; then
+#         echo "alias woman='eg'" >> ~/.bash_aliases
+#       fi  
 
-      exit 0
+#       exit 0
 
-- hosts: all
-  tasks:
-  - name: Install SDKMan
-    shell: curl -s "https://get.sdkman.io" | bash
-    args:
-      warn: false
-  - name: Install SDKMan
-    shell: |
-      cd "{{ ansible_env.HOME }}/.sdkman/bin/"
-      source ./sdkman-init.sh
-      sdk install java
-      cd
-      exit 0
-  - name: Install NVM
-    shell: >
-      curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.34.0/install.sh | bash
-    args:
-      creates: "{{ ansible_env.HOME }}/.nvm/nvm.sh"
-      warn: false
-  - name: Install Node
-    shell: |
-      source "{{ ansible_env.HOME }}/.nvm/nvm.sh"
-      nvm install node
-      exit 0
+# - hosts: all
+#   tasks:
+#   - name: Install SDKMan
+#     shell: curl -s "https://get.sdkman.io" | bash
+#     args:
+#       warn: false
+#   - name: Install SDKMan
+#     shell: |
+#       cd "{{ ansible_env.HOME }}/.sdkman/bin/"
+#       source ./sdkman-init.sh
+#       sdk install java
+#       cd
+#       exit 0
+#   - name: Install NVM
+#     shell: >
+#       curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.34.0/install.sh | bash
+#     args:
+#       creates: "{{ ansible_env.HOME }}/.nvm/nvm.sh"
+#       warn: false
+#   - name: Install Node
+#     shell: |
+#       source "{{ ansible_env.HOME }}/.nvm/nvm.sh"
+#       nvm install node
+#       exit 0
 
 - hosts: master
   become: yes
@@ -58,16 +58,15 @@
       snap install intellij-idea-community --classic
       snap install kata-containers --classic
       snap install google-cloud-sdk --classic
-      snap install aws-cli --classic
       snap install helm --classic
       snap install keepassxc
   - name: Install draw.io
     shell: curl -L https://github.com/jgraph/drawio-desktop/releases/download/v9.3.1/draw.io-amd64-9.3.1.deb -o /tmp/draw.io-amd64-9.3.1.deb  
       && sudo dpkg -i /tmp/draw.io-amd64-9.3.1.deb 
       && rm /tmp/draw.io-amd64-9.3.1.deb
-  - name: Install kubectl
+  - name: Install kubectl & aws cli
     apt:
-      name: ['kubectl']
+      name: ['kubectl','awscli']
       state: latest
       update_cache: yes
   - name: Install Calicoctl
