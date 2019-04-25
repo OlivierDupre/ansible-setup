@@ -1,52 +1,52 @@
 ---
-# - hosts: all
-#   become: yes
-#   tasks:
-#   - name: Install base packages
-#     apt:
-#       name: ['git','git-extras','wget','curl','tilix','vim','apt-transport-https','ca-certificates','software-properties-common','build-essential','libssl-dev','htop','tree','make','libc6-i386','lib32z1','libc6','python','python-pip','python3-pip','python-dev','libssl-dev','libcurl4-gnutls-dev','libexpat1-dev','unzip','python-lxml','g++','asciinema','gnupg-agent','snapd','apache2-utils']
-#       update_cache: yes
-#       state: latest
-#   - name: Install eg
-#     shell: |
-#       git clone https://github.com/srsudar/eg /opt/eg;
-#       ln -s /opt/eg/eg_exec.py /usr/local/bin/eg;
+- hosts: all
+  become: yes
+  tasks:
+  - name: Install base packages
+    apt:
+      name: ['git','git-extras','wget','curl','tilix','vim','apt-transport-https','ca-certificates','software-properties-common','build-essential','libssl-dev','htop','tree','make','libc6-i386','lib32z1','libc6','python','python-pip','python3-pip','python-dev','libssl-dev','libcurl4-gnutls-dev','libexpat1-dev','unzip','python-lxml','g++','asciinema','gnupg-agent','snapd','apache2-utils']
+      update_cache: yes
+      state: latest
+  - name: Install eg
+    shell: |
+      git clone https://github.com/srsudar/eg /opt/eg;
+      ln -s /opt/eg/eg_exec.py /usr/local/bin/eg;
 
-#       if [ ! -f ~/.bash_aliases ]; then
-#         touch ~/.bash_aliases
-#       fi
+      if [ ! -f ~/.bash_aliases ]; then
+        touch ~/.bash_aliases
+      fi
 
-#       nb_definitions=`grep 'woman=' ~/.bash_aliases | wc -l`
-#       if [ $nb_definitions -eq 0 ]; then
-#         echo "alias woman='eg'" >> ~/.bash_aliases
-#       fi  
+      nb_definitions=`grep 'woman=' ~/.bash_aliases | wc -l`
+      if [ $nb_definitions -eq 0 ]; then
+        echo "alias woman='eg'" >> ~/.bash_aliases
+      fi  
 
-#       exit 0
+      exit 0
 
-# - hosts: all
-#   tasks:
-#   - name: Install SDKMan
-#     shell: curl -s "https://get.sdkman.io" | bash
-#     args:
-#       warn: false
-#   - name: Install SDKMan
-#     shell: |
-#       cd "{{ ansible_env.HOME }}/.sdkman/bin/"
-#       source ./sdkman-init.sh
-#       sdk install java
-#       cd
-#       exit 0
-#   - name: Install NVM
-#     shell: >
-#       curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.34.0/install.sh | bash
-#     args:
-#       creates: "{{ ansible_env.HOME }}/.nvm/nvm.sh"
-#       warn: false
-#   - name: Install Node
-#     shell: |
-#       source "{{ ansible_env.HOME }}/.nvm/nvm.sh"
-#       nvm install node
-#       exit 0
+- hosts: all
+  tasks:
+  - name: Install SDKMan
+    shell: curl -s "https://get.sdkman.io" | bash
+    args:
+      warn: false
+  - name: Install SDKMan
+    shell: |
+      cd "{{ ansible_env.HOME }}/.sdkman/bin/"
+      source ./sdkman-init.sh
+      sdk install java
+      cd
+      exit 0
+  - name: Install NVM
+    shell: >
+      curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.34.0/install.sh | bash
+    args:
+      creates: "{{ ansible_env.HOME }}/.nvm/nvm.sh"
+      warn: false
+  - name: Install Node
+    shell: |
+      source "{{ ansible_env.HOME }}/.nvm/nvm.sh"
+      nvm install node
+      exit 0
 
 - hosts: master
   become: yes
@@ -101,5 +101,14 @@
         COMPDIR=$(pkg-config --variable=completionsdir bash-completion)
         ln -sf /opt/kubectx//completion/kubens.bash $COMPDIR/kubens
         ln -sf /opt/kubectx//completion/kubectx.bash $COMPDIR/kubectx
+      fi
+      exit 0
+  - name: Install Dive... to dive into Docker layers
+    shell: |
+      nb_definitions=`apt list dive 2> /dev/null | grep install | wc -l`
+      if [ $nb_definitions -eq 0 ]; then
+        wget https://github.com/wagoodman/dive/releases/download/v0.7.2/dive_0.7.2_linux_amd64.deb;
+        apt install ./dive_0.7.2_linux_amd64.deb;
+        rm ./dive_0.7.2_linux_amd64.deb
       fi
       exit 0
