@@ -102,28 +102,29 @@
       fi  
 
       exit 0
-  - name: Download Polyglot prompt
-    git:
-      repo: 'https://github.com/agkozak/polyglot.git'
-      dest: ~/prompt/polyglot
-  - name: Source gitprompt
-    shell: |
-      nb_definitions=`grep 'polyglot' ~/.bashrc | wc -l`
-      if [ $nb_definitions -eq 0 ]; then
-        echo "source ~/prompt/polyglot/polyglot.sh" >> ~/.bashrc
-      fi  
+  # Alternate prompt
+  # - name: Download Polyglot prompt
+  #   git:
+  #     repo: 'https://github.com/agkozak/polyglot.git'
+  #     dest: ~/prompt/polyglot
+  # - name: Source gitprompt
+  #   shell: |
+  #     nb_definitions=`grep 'polyglot' ~/.bashrc | wc -l`
+  #     if [ $nb_definitions -eq 0 ]; then
+  #       echo "source ~/prompt/polyglot/polyglot.sh" >> ~/.bashrc
+  #     fi  
 
-      exit 0
-  - name: Download Polyglot-Kube-ps1 prompt
-    git:
-      repo: 'https://github.com/agkozak/polyglot-kube-ps1.git'
-      dest: ~/prompt/polyglot-kube-ps1
-  - name: Source polyglot-kube-ps1
-    shell: |
-      nb_definitions=`grep 'polyglot-kube-ps1' ~/.bashrc | wc -l`
-      if [ $nb_definitions -eq 0 ]; then
-        echo "source ~/prompt/polyglot-kube-ps1/polyglot-kube-ps1.sh" >> ~/.bashrc
-      fi  
+  #     exit 0
+  # - name: Download Polyglot-Kube-ps1 prompt
+  #   git:
+  #     repo: 'https://github.com/agkozak/polyglot-kube-ps1.git'
+  #     dest: ~/prompt/polyglot-kube-ps1
+  # - name: Source polyglot-kube-ps1
+  #   shell: |
+  #     nb_definitions=`grep 'polyglot-kube-ps1' ~/.bashrc | wc -l`
+  #     if [ $nb_definitions -eq 0 ]; then
+  #       echo "source ~/prompt/polyglot-kube-ps1/polyglot-kube-ps1.sh" >> ~/.bashrc
+  #     fi  
 
-      exit 0
+  #     exit 0
 
