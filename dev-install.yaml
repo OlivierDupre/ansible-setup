@@ -59,6 +59,7 @@
       snap install kata-containers --classic
       snap install google-cloud-sdk --classic
       snap install helm --classic
+      snap install --classic go
       snap install keepassxc
   - name: Install draw.io
     shell: curl -L https://github.com/jgraph/drawio-desktop/releases/download/v9.3.1/draw.io-amd64-9.3.1.deb -o /tmp/draw.io-amd64-9.3.1.deb  
