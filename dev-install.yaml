@@ -33,7 +33,7 @@
     shell: |
       cd "{{ ansible_env.HOME }}/.sdkman/bin/"
       source ./sdkman-init.sh
-      sdk install java
+      sdk install java && sdk install kotlin && sdk install maven && sdk install gradle && sdk install springboot
       cd
       exit 0
   - name: Install NVM
