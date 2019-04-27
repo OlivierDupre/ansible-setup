@@ -49,4 +49,7 @@
   - name: Reload docker service config
     shell: systemctl daemon-reload 
   - name: Restart docker service
-    shell: systemctl restart docker 
+    shell: systemctl restart docker
+# Optionnally, run these to add run Docker without sudo. This is dangerous and it's highly recommended NOT to do this.
+  # groupadd docker
+  # usermod -aG docker $USER
