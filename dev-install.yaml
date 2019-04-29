@@ -68,7 +68,10 @@
     shell: |
       . /etc/os-release
       export CLOUD_SDK_REPO="cloud-sdk-$UBUNTU_CODENAME"
-      echo "deb http://packages.cloud.google.com/apt $CLOUD_SDK_REPO main" | tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
+      nb_definitions=`grep -R cloud-sdk /etc/apt/sources.list.d | wc -l`
+      if [ $nb_definitions -eq 0 ]; then
+        echo "deb http://packages.cloud.google.com/apt $CLOUD_SDK_REPO main" | tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
+      fi
       curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add - 
       exit 0
   - name: Install kubectl, aws cli & gcloud-sdk
@@ -76,7 +79,7 @@
       name: ['kubectl','awscli']
       state: latest
       update_cache: yes
-  - name: Install gcloud-sdk
+  - name: Install gcloud-sdk -> NEEDS MANUAL ADDITIONAL STEPS! https://cloud.google.com/sdk/docs/quickstart-linux
     shell: |
       curl -O https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-243.0.0-linux-x86_64.tar.gz ;
       tar -zxf google-cloud-sdk-243.0.0-linux-x86_64.tar.gz ;
