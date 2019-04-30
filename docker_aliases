@@ -1,0 +1,48 @@
+# ------------------------------------
+# Docker alias and function
+# ------------------------------------
+
+# Get container IP
+alias dip="docker inspect --format '{{ .NetworkSettings.IPAddress }}'"
+
+# Stop all containers
+dstop() { docker stop $(docker ps -a -q); }
+
+# Remove all non-running containers
+drm() { docker rm $(docker ps -a -q); }
+
+# Stop and Remove all containers
+# alias drmf='dstop && drm'
+
+# Remove all images
+# dri() { docker rmi $(docker images -q); }
+
+# Show all alias related docker
+dalias() { alias | grep 'docker' | sed "s/^\([^=]*\)=\(.*\)/\1 => \2/"| sed "s/['|\']//g" | sort; }
+
+# Bash into running container
+dbash() { docker exec -it $(docker ps -aqf "name=$1") bash; }
+
+function docker-rm-named(){
+    if [[ "$#" != 1 ]]; then
+        echo "Only one argument allowed"
+        return 1
+    fi
+    docker ps --format "table {{.ID}}\t{{.Image}}\t{{.Names}}" | awk '{ print $1,$3 }' | grep $1 | awk '{print $1 }' | xargs -I {} docker rm {}
+}
+
+function docker-rm-image(){
+    if [[ "$#" != 1 ]]; then
+        echo "Only one argument allowed"
+        return 1
+    fi
+    docker ps --format "table {{.ID}}\t{{.Image}}\t{{.Names}}" | awk '{ print $1,$2 }' | grep $1 | awk '{print $1 }' | xargs -I {} docker rm {}
+}
+
+function docker-rmi-named(){
+    if [[ "$#" != 1 ]]; then
+        echo "Only one argument allowed"
+        return 1
+    fi
+    docker images --format "table {{.ID}}\t{{.Repository}}"  | grep $1 | awk '{print $1 }' | xargs -I {} docker rmi {}
+}
