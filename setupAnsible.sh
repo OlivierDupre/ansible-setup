@@ -21,6 +21,9 @@ touch /etc/ansible/hosts
 if ! grep master /etc/ansible/hosts
 then
 cat >> /etc/ansible/hosts << EOM
+[dev]
+$(ifconfig | sed -En 's/127.0.0.1//;s/.*inet (addr:)?(([0-9]*\.){3}[0-9]*).*/\2/p' | head -n1)
+
 [master]
 $(ifconfig | sed -En 's/127.0.0.1//;s/.*inet (addr:)?(([0-9]*\.){3}[0-9]*).*/\2/p' | head -n1)
 

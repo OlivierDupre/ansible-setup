@@ -1,0 +1,72 @@
+#!/bin/bash
+
+# Upgrades the distribution (soft and kernel, not Ubuntu itself) then removes and cleans unecessary packages.
+alias distUpgrade='sudo apt-get update && sudo apt-get full-upgrade && sudo apt-get autoclean && sudo apt-get autoremove'
+alias vi="vim"
+alias diff="colordiff"
+alias mkdir="mkdir -p"
+
+alias ls="ls --color=always"
+alias ld='ls -Gl | grep ^d' #Only list directories
+alias lad='ls -Gal | grep ^d' #Only list directories, including hidden ones
+alias l.='ls -d .* --color=auto'
+alias lr='ls -R | grep ":$" | sed -e '\''s/:$//'\'' -e '\''s/[^-][^\/]*\//--/g'\'' -e '\''s/^/   /'\'' -e '\''s/-/|/'\'''
+alias ll="ls -lah"
+
+alias ds="du . -d 1 -ah|sort -rh"
+alias ducks='du -chs *|sort -rn|head -11'
+alias treeSize="tree -dhs --du"
+
+alias openports='sudo netstat -vtlnp --listening -4'
+alias wotgobblemem='ps -o time,ppid,pid,nice,pcpu,pmem,user,comm -A | sort -n -k 6 | tail -15'
+alias myip='curl ip.appspot.com'
+alias open='xdg-open'
+
+# Récupération des sources et javadocs Maven
+alias mvnSourcesAndDocs="mvn clean install dependency:sources dependency:resolve -Dclassifier=javadoc"
+
+alias goIndexedDb="cd ~/.mozilla/firefox/*.default/storage/permanent/"
+
+fkill(){
+    ps aux | grep "$1" | grep -v grep | awk '{print $2;}' | while read p; do kill $p; done
+}
+
+fkill9(){
+    ps aux | grep "$1" | grep -v grep | awk '{print $2;}' | while read p; do kill -9 $p; done
+}
+
+..() {
+  N=$(($1))
+  if [ $N -lt 1 ]; then
+    N=1
+  fi
+  while ((N)); do
+    cd ..
+    let N-=1
+  done;
+}
+
+extract () {
+    if [ -f $1 ] ; then
+      case $1 in
+        *.tar.bz2)   tar xjf $1     ;;
+        *.tar.gz)    tar xzf $1     ;;
+        *.bz2)       bunzip2 $1     ;;
+        *.rar)       unrar e $1     ;;
+        *.gz)        gunzip $1      ;;
+        *.tar)       tar xf $1      ;;
+        *.tbz2)      tar xjf $1     ;;
+        *.tgz)       tar xzf $1     ;;
+        *.zip)       unzip $1       ;;
+        *.Z)         uncompress $1  ;;
+        *.7z)        7z x $1        ;;
+        *)     echo "'$1' cannot be extracted via extract()" ;;
+         esac
+     else
+         echo "'$1' is not a valid file"
+     fi
+}
+
+function ssh-tmux() { 
+	ssh -t "$1" tmux a || ssh -t "$1" tmux; 
+}

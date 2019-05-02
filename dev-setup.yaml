@@ -1,16 +1,10 @@
 ---
 - hosts: all
   tasks:
-  - name: Setup Git
-    shell: |
-      git alias st status
-      git alias ci commit
-      git alias co checkout
-      git alias cam "commit -am"
-      git alias lg "log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit"
-      exit 0
+  # - name: Setup Git TBD
+  #   shell: cat git/gitignore >> ~/.git_ignore
 
-  - name: Setup VIM as default editor
+  - name: Setup VIM as default editor for... everything
     shell: |
       if [ -f ~/.bash_aliases ]; then
         nb_definitions=`grep vim ~/.bash_aliases | wc -l`
@@ -54,11 +48,11 @@
     register: output
   - debug: var=output.stdout_lines
 
-- hosts: master
-  become: yes
-  tasks:
-  - name: Add current user to VBox group to provide access to shared folders
-    shell: adduser $SUDO_USER vboxsf
+# - hosts: master
+#   become: yes
+#   tasks:
+#   - name: Add current user to VBox group to provide access to shared folders
+#     shell: adduser $SUDO_USER vboxsf
 
 - hosts: master
   tasks:

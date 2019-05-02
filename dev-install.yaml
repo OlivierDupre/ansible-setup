@@ -48,18 +48,17 @@
       nvm install node
       exit 0
 
-- hosts: master
+- hosts: all
   become: yes
   tasks:
   - name: Install Snaps
     shell: |
-      snap install fkill postman 
-      snap install code --classic  # Load config with extension Settings Sync. Github token store separately, privately in notes with Gist Id.
+      snap install fkill postman keepassxc
+      # snap install code --classic  # Load config with extension Settings Sync. Github token store separately, privately in notes with Gist Id.
       snap install intellij-idea-community --classic
       snap install kata-containers --classic
       snap install helm --classic
       snap install --classic go
-      snap install keepassxc
   - name: Install draw.io
     shell: curl -L https://github.com/jgraph/drawio-desktop/releases/download/v9.3.1/draw.io-amd64-9.3.1.deb -o /tmp/draw.io-amd64-9.3.1.deb  
       && sudo dpkg -i /tmp/draw.io-amd64-9.3.1.deb 
@@ -79,14 +78,6 @@
       name: ['kubectl','awscli']
       state: latest
       update_cache: yes
-  - name: Install gcloud-sdk -> NEEDS MANUAL ADDITIONAL STEPS! https://cloud.google.com/sdk/docs/quickstart-linux
-    shell: |
-      curl -O https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-243.0.0-linux-x86_64.tar.gz ;
-      tar -zxf google-cloud-sdk-243.0.0-linux-x86_64.tar.gz ;
-      # Run ./google-cloud-sdk/install.sh
-      # Run rm -Rf ./google-cloud-sdk google-cloud-sdk-243.0.0-linux-x86_64.tar.gz
-      # Run gcloud-init; gcloud components list ; gcloud components install beta  docker-credential-gcr  cloud-build-local
-      exit 0
   - name: Install Calicoctl
     shell: curl -O -L  https://github.com/projectcalico/calicoctl/releases/download/v3.6.1/calicoctl -o /bin/bash/calicoctl
   - name: Install kubeval to validate K8S manifests
@@ -135,3 +126,11 @@
       curl -Lo skaffold https://storage.googleapis.com/skaffold/releases/latest/skaffold-linux-amd64
       chmod +x skaffold
       sudo mv skaffold /usr/local/bin
+  - name: Install gcloud-sdk -> NEEDS MANUAL ADDITIONAL STEPS! https://cloud.google.com/sdk/docs/quickstart-linux
+    shell: |
+      curl -O https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-243.0.0-linux-x86_64.tar.gz ;
+      tar -zxf google-cloud-sdk-243.0.0-linux-x86_64.tar.gz ;
+      # Run ./google-cloud-sdk/install.sh
+      # Run rm -Rf ./google-cloud-sdk google-cloud-sdk-243.0.0-linux-x86_64.tar.gz
+      # Run gcloud-init; gcloud components list ; gcloud components install beta  docker-credential-gcr  cloud-build-local
+      exit 0

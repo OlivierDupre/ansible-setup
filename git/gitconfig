@@ -1,0 +1,70 @@
+# http://www.git-attitude.fr/2014/09/15/30-options-git-qui-gagnent-a-etre-connues/
+[push]
+	default = simple
+[credential]
+	helper = cache --timeout=3600
+[core]
+	excludesfile = ~/.gitignore_global
+	editor = vim
+[diff]
+	compactionHeuristic = true
+[color]
+    ui = auto
+[color "branch"]
+    current = yellow reverse
+    local = yellow
+    remote = green
+[color "diff"]
+    meta = yellow bold
+    frag = magenta bold
+    old = red bold
+    new = green bold
+[color "status"]
+    added = yellow
+    changed = green
+    untracked = cyan
+[alias]
+	# http://durdn.com/blog/2012/11/22/must-have-git-aliases-advanced-examples/
+	# https://github.com/durdn/cfg/blob/master/.gitconfig
+	lg = show-tree
+	ls = log --pretty=format:"%C(yellow)\\ %ad\\ %h%Cred%d\\ %Creset%s%Cblue\\ [%cn]" --decorate --date=short
+	ll = log --pretty=format:'%C(yellow)%h%Cred%d\\ %Creset%s%Cblue\\ [%cn]' --decorate --numstat
+	logb = log --cherry-mark --oneline #master...current
+	shorty = status --short --branch
+	st = status
+	co = checkout
+	ci = commit
+    cam = "commit -am"
+	it = "!git init && git commit -m \"Initial empty commit\" --allow-empty"
+	who = shortlog -sne
+	changes = diff --name-status
+	cached = diff --cached
+	stat = diff --stat
+	# Afficher les changements depuis le dernier pull
+	lc = "!git oneline ORIG_HEAD.. --stat --no-merges"
+	# Ouvrir les fichiers modifiés depuis le dernier commit
+	mate = "!git-ls-files -m -z | xargs -0 mate"
+	# Même ceux non suivi par Git...
+	mateall = "!git-ls-files -m -o --exclude-standard -z | xargs -0 mate"
+	# List branches sorted by last modified
+	lb = "!git for-each-ref --sort='-authordate' --format='%(authordate)%09%(objectname:short)%09%(refname)' refs/heads | sed -e 's-refs/heads/--'"
+	# List aliases
+	la = "!git config -l | grep alias | cut -c 7-"
+	# Delete local branches that have been merged to HEAD
+	clean-merged-dry = !git branch -r --merged | grep -v \"\\*\" | grep -v master |grep -v develop|xargs -L1|awk -F 'origin/' '{print $2}'
+	clean-merged = !git branch -r --merged | grep -v \"\\*\" | grep -v master |grep -v develop|xargs -L1|awk -F 'origin/' '{print $2}'| xargs git push origin --delete --dry-run
+	# Find files
+	f = "!git ls-files | grep -i"
+	find = "!git ls-files | grep -i"
+	# Diff from revision
+	dr  = "!f() { git diff "$1"^.."$1"; }; f"
+	# Modified in last commit
+	dl = "!git ll -1"
+	# Diff last commit
+	dlc = diff --cached HEAD^
+	# Rename [branch] to done-[branch]
+	done = "!f() { git branch | grep "$1" | cut -c 3- | grep -v done | xargs -I{} git branch -m {} done-{}; }; f"
+	# Merge...
+	merc = merge --no-ff
+	ours = "!f() { git co --ours $@ && git add $@; }; f"
+	theirs = "!f() { git co --theirs $@ && git add $@; }; f"
