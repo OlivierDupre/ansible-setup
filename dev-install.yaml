@@ -1,5 +1,5 @@
 ---
-- hosts: all
+- hosts: dev
   become: yes
   tasks:
   - name: Install base packages
@@ -12,18 +12,9 @@
       git clone https://github.com/srsudar/eg /opt/eg;
       ln -s /opt/eg/eg_exec.py /usr/local/bin/eg;
 
-      if [ ! -f ~/.bash_aliases ]; then
-        touch ~/.bash_aliases
-      fi
-
-      nb_definitions=`grep 'woman=' ~/.bash_aliases | wc -l`
-      if [ $nb_definitions -eq 0 ]; then
-        echo "alias woman='eg'" >> ~/.bash_aliases
-      fi  
-
       exit 0
 
-- hosts: all
+- hosts: dev
   tasks:
   - name: Install SDKMan
     shell: curl -s "https://get.sdkman.io" | bash
@@ -48,21 +39,35 @@
       nvm install node
       exit 0
 
-- hosts: all
+- hosts: dev
   become: yes
   tasks:
   - name: Install Snaps
     shell: |
       snap install fkill postman keepassxc
-      # snap install code --classic  # Load config with extension Settings Sync. Github token store separately, privately in notes with Gist Id.
-      snap install intellij-idea-community --classic
-      snap install kata-containers --classic
+      # snap install code-insiders --classic  # Load config with extension Settings Sync. Github token store separately, privately in notes with Gist Id.
+      # snap install intellij-idea-community --classic
+      # snap install kata-containers --classic
       snap install helm --classic
       snap install --classic go
+  - name: Add snap to the PATH
+    shell: | 
+      nb_definitions=`grep /snap/bin ~/.bashrc | wc -l`
+      if [ $nb_definitions -eq 0 ]; then
+        echo 'export PATH="/snap/bin:$PATH"'  >> ~/.bashrc
+      fi
+      exit 0
   - name: Install draw.io
     shell: curl -L https://github.com/jgraph/drawio-desktop/releases/download/v9.3.1/draw.io-amd64-9.3.1.deb -o /tmp/draw.io-amd64-9.3.1.deb  
       && sudo dpkg -i /tmp/draw.io-amd64-9.3.1.deb 
       && rm /tmp/draw.io-amd64-9.3.1.deb
+  - name: Prepare VSCode installation
+    shell: |
+      curl https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.gpg;
+      install -o root -g root -m 644 microsoft.gpg /etc/apt/trusted.gpg.d/;
+      rm  -f microsoft.gpg ;
+      sh -c 'echo "deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main" > /etc/apt/sources.list.d/vscode.list';
+      exit 0
   - name: Prepare gcloud-sdk installation
     shell: |
       . /etc/os-release
@@ -73,13 +78,13 @@
       fi
       curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add - 
       exit 0
-  - name: Install kubectl, aws cli & gcloud-sdk
+  - name: Install kubectl, aws cli & vscode
     apt:
-      name: ['kubectl','awscli']
+      name: ['kubectl','awscli','code-insiders']
       state: latest
       update_cache: yes
-  - name: Install Calicoctl
-    shell: curl -O -L  https://github.com/projectcalico/calicoctl/releases/download/v3.6.1/calicoctl -o /bin/bash/calicoctl
+  #- name: Install Calicoctl
+  #  shell: curl -O -L  https://github.com/projectcalico/calicoctl/releases/download/v3.6.1/calicoctl -o /bin/bash/calicoctl
   - name: Install kubeval to validate K8S manifests
     shell: |
       if [ ! \( -e /usr/local/bin/kubeval \) ]; then 
@@ -131,6 +136,6 @@
       curl -O https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-243.0.0-linux-x86_64.tar.gz ;
       tar -zxf google-cloud-sdk-243.0.0-linux-x86_64.tar.gz ;
       # Run ./google-cloud-sdk/install.sh
-      # Run rm -Rf ./google-cloud-sdk google-cloud-sdk-243.0.0-linux-x86_64.tar.gz
+      # Run rm -Rf  google-cloud-sdk-243.0.0-linux-x86_64.tar.gz
       # Run gcloud-init; gcloud components list ; gcloud components install beta  docker-credential-gcr  cloud-build-local
       exit 0
