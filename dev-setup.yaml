@@ -1,21 +1,43 @@
 ---
 - hosts: all
   tasks:
-  # - name: Setup Git TBD
-  #   shell: cat git/gitignore >> ~/.git_ignore
-
-  - name: Setup VIM as default editor for... everything
+  - name: Define global gitignore 
+    copy:
+      src: .gitignore
+      dest: "~/.gitignore"
+  - name: Setup Git global ignore
+    shell: git config --global --replace-all core.excludesfile '~/.gitignore'
+  - name: Define gitprompt options
+    copy:
+      src: config/alias
+      dest: "~/.common_aliases"
+  - name: Setup common aliases
     shell: |
       if [ -f ~/.bash_aliases ]; then
-        nb_definitions=`grep vim ~/.bash_aliases | wc -l`
-        if [ ! $nb_definitions -eq 0 ]; then
-          echo "VIM as default editor already defined"
-          exit 0
+        nb_definitions=`grep distUpgrade ~/.bash_aliases | wc -l`
+        if [ $nb_definitions -eq 0 ]; then
+          cat ~/.common_aliases >> ~/.bash_aliases
         fi
       fi
-
-      echo 'export VISUAL=vim' >> ~/.bash_aliases
-      echo 'export EDITOR="$VISUAL"' >> ~/.bash_aliases
+      rm -f ~/.common_aliases
+      
+      exit 0
+  - name: Define git aliases
+    copy:
+      src: config/gitconfig
+      dest: "~/git.aliases"
+  - name: Setup git aliases
+    shell: |
+      if [ -f ~/.gitconfig ]; then
+        nb_definitions=`grep show-tree ~/.gitconfig | wc -l`
+        if [ $nb_definitions -gt 0 ]; then
+          echo "Git aliases already defined"
+        else
+          cat ~/git.aliases >> ~/.gitconfig
+        fi
+      fi
+      rm -f ~/git.aliases
+      
       exit 0
 
   - name: Create ssh-keygen if it does not already exist
@@ -26,27 +48,18 @@
       exit 0
     args:
       executable: /bin/bash
-
-  - name: Create common aliases
+  
+  - name: Source kubectl completion
     shell: |
-      if [ ! -f ~/.bash_aliases ]; then
-        touch ~/.bash_aliases
-      fi
-
-      nb_definitions=`grep 'll=' ~/.bash_aliases | wc -l`
-      if [ $nb_definitions -eq 0 ]; then
-        echo "alias ll='ls -alhF'" >> ~/.bash_aliases
-      fi
-    
-      nb_definitions=`grep ansible ~/.bash_aliases | wc -l`
-      if [ $nb_definitions -eq 0 ]; then
-        echo "alias ap='ansible-playbook'" >> ~/.bash_aliases
-        echo "alias apb='ansible-playbook --ask-become-pass'" >> ~/.bash_aliases
+      if [ -f ~/.bashrc ]; then
+        nb_definitions=`grep 'kubectl completion' ~/.bashrc | wc -l`
+        if [ $nb_definitions -eq 0 ]; then
+          echo "source <(kubectl completion bash)" ~/.bashrc
+          echo "source <(kubectl completion bash | sed s/kubectl/k/g)" ~/.bashrc
+        fi
       fi
 
       exit 0
-    register: output
-  - debug: var=output.stdout_lines
 
 # - hosts: master
 #   become: yes
@@ -54,17 +67,8 @@
 #   - name: Add current user to VBox group to provide access to shared folders
 #     shell: adduser $SUDO_USER vboxsf
 
-- hosts: master
+- hosts: dev
   tasks:
-  - name: Source kubectl completion
-    shell: |
-      nb_definitions=`grep 'kubectl completion' ~/.bashrc | wc -l`
-      if [ $nb_definitions -eq 0 ]; then
-        echo "source <(kubectl completion bash)" ~/.bashrc
-        echo "source <(kubectl completion bash | sed s/kubectl/k/g)" ~/.bashrc
-      fi
-
-      exit 0
   - name: Setup AWS CLI autocompletion
     shell: |
       local_path=`which aws_completer`
