@@ -1,5 +1,5 @@
 ---
-- hosts: all
+- hosts: dev
   become: yes
   tasks:
   - name: Install personal packages
@@ -7,8 +7,14 @@
       name: ['most','asunder','pdfsam','flac','gparted','openshot','timeshift','playonlinux','gettext','colordiff','meld','toilet','cmatrix','asciinema','snapd']
       update_cache: yes
       state: latest
-  - name: Install Spotify
-    shell: |
-      snap install spotify whatsdesk slack chromium tor
-      snap install skype --classic
-      snap install slack --classic
+  - name: Remove useless packages
+    apt: 
+      name: ['simple-scan','onboard*','libreoffice*','media-player*','rhythmbox*','pix*','thunderbird*','hexchat*','transmission*','tomboy']
+      state: absent
+      autoclean: yes
+      autoremove: yes
+  # - name: Install Spotify
+  #   shell: |
+  #     snap install spotify whatsdesk slack chromium tor
+  #     snap install skype --classic
+  #     snap install slack --classic
