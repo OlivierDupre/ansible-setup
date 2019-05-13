@@ -137,5 +137,5 @@
       tar -zxf google-cloud-sdk-243.0.0-linux-x86_64.tar.gz ;
       # Run ./google-cloud-sdk/install.sh
       # Run rm -Rf  google-cloud-sdk-243.0.0-linux-x86_64.tar.gz
-      # Run gcloud-init; gcloud components list ; gcloud components install beta  docker-credential-gcr  cloud-build-local
+      # Run gcloud-init; gcloud components list ; gcloud components install beta kubectl cloud-build-local docker-credential-gcr
       exit 0
