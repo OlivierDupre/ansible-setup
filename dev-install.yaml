@@ -4,14 +4,13 @@
   tasks:
   - name: Install base packages
     apt:
-      name: ['git','git-extras','wget','curl','tilix','vim','apt-transport-https','ca-certificates','software-properties-common','build-essential','libssl-dev','htop','tree','make','libc6-i386','lib32z1','libc6','python','python-pip','python3-pip','python-dev','libssl-dev','libcurl4-gnutls-dev','libexpat1-dev','unzip','python-lxml','g++','asciinema','gnupg-agent','snapd','apache2-utils']
+      name: ['git','git-extras','wget','curl','tilix','vim','apt-transport-https','ca-certificates','software-properties-common','build-essential','libssl-dev','htop','tree','make','libc6-i386','lib32z1','libc6','python','python-pip','python3-pip','python-dev','libssl-dev','libcurl4-gnutls-dev','libexpat1-dev','unzip','python-lxml','g++','asciinema','gnupg-agent','snapd','apache2-utils','lsb-release','gnupg']
       update_cache: yes
       state: latest
   - name: Install eg
     shell: |
       git clone https://github.com/srsudar/eg /opt/eg;
       ln -s /opt/eg/eg_exec.py /usr/local/bin/eg;
-
       exit 0
 
 - hosts: dev
@@ -78,9 +77,15 @@
       fi
       curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add - 
       exit 0
-  - name: Install kubectl, aws cli & vscode
+  - name: Prepare Azure CLI installation
+    shell: |
+      curl -sL https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor | tee /etc/apt/trusted.gpg.d/microsoft.asc.gpg > /dev/null
+      . /etc/os-release
+      echo "deb [arch=amd64] https://packages.microsoft.com/repos/azure-cli/ $UBUNTU_CODENAME main" | tee /etc/apt/sources.list.d/azure-cli.list
+      exit 0
+  - name: Install kubectl, aws cli, az cli & vscode
     apt:
-      name: ['kubectl','awscli','code-insiders']
+      name: ['kubectl','awscli','azure-cli','code-insiders']
       state: latest
       update_cache: yes
   #- name: Install Calicoctl
