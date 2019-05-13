@@ -32,10 +32,38 @@
       dest: "{{ logname_home.stdout }}/.k8s_aliases"
   - name: Load K8S aliases
     shell: |
-      nb_definitions=`grep k8s_aliases ~/.bash_aliases | wc -l`
+      nb_definitions=`grep k8s_aliases {{ logname_home.stdout }}/.bash_aliases | wc -l`
       if [ $nb_definitions -eq 0 ]; then
-        echo "if [ -f ~/.k8s_aliases ]; then"  >> ~/.bash_aliases
-        echo "  . ~/.k8s_aliases"  >> ~/.bash_aliases
-        echo "fi"  >> ~/.bash_aliases
+        echo "if [ -f {{ logname_home.stdout }}/.k8s_aliases ]; then"  >> {{ logname_home.stdout }}/.bash_aliases
+        echo "  . {{ logname_home.stdout }}/.k8s_aliases"  >> {{ logname_home.stdout }}/.bash_aliases
+        echo "fi"  >> {{ logname_home.stdout }}/.bash_aliases
       fi
       exit 0
+
+# - hosts: master,nodes
+#   become: yes
+#   tasks:
+#   - name: Install kubelet, kubeadm && kubectl
+#     apt:
+#       name: ['kubelet','kubeadm','kubectl']
+#       state: latest
+#       update_cache: yes
+
+
+
+# kubectl create secret docker-registry gcr-access-token \
+# --docker-server=gcr.io \
+# --docker-username=oauth2accesstoken \
+# --docker-password="$(gcloud auth print-access-token)" \
+# --docker-email=dupreolivier@gmail.com
+
+# kubectl patch serviceaccount default \
+# -p '{"imagePullSecrets": [{"name": "gcr-access-token"}]}'
+
+# k config unset current-context
+
+# gcloud auth print-access-token | docker login -u oauth2accesstoken --password-stdin https://gcr.io
+
+# https://cloud.google.com/kubernetes-engine/docs/how-to/preemptible-vms
+# gcloud beta container clusters create [CLUSTER_NAME] --preemptible
+# gcloud beta container node-pools create [POOL_NAME] --preemptible --cluster [CLUSTER_NAME]
