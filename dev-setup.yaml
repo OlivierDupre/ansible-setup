@@ -39,7 +39,18 @@
       rm -f ~/git.aliases
       
       exit 0
-
+  - name: Define bash 4 functions 
+    copy:
+      src: bash4rc
+      dest: "~/.bash4rc"
+  - name: Setup bash 4 options
+    shell: |
+      nb_definitions=`grep bash4rc ~/.bashrc | wc -l`
+      if [ $nb_definitions -eq 0 ]; then
+        echo "if [ -f ~/.bash4rc ]; then source ~/.bash4rc;  fi" >> ~/.bashrc
+      fi
+      
+      exit 0      
   - name: Create ssh-keygen if it does not already exist
     shell: |
       if [ ! -f ~/.ssh/id_rsa ]; then
