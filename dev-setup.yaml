@@ -102,16 +102,20 @@
       dest: ~/prompt/bash-git-prompt
   - name: Define gitprompt options
     copy:
-      src: gitprompt
+      src: prompt/gitprompt
       dest: "~/prompt/bash-git-prompt/custom-gitprompt.sh"
-  - name: Source gitprompt
-    shell: |
-      nb_definitions=`grep 'custom-gitprompt' ~/.bashrc | wc -l`
-      if [ $nb_definitions -eq 0 ]; then
-        echo "source ~/prompt/bash-git-prompt/custom-gitprompt.sh" >> ~/.bashrc
-      fi  
+  - name: Define bashprompt options
+    copy:
+      src: prompt/bashprompt
+      dest: "~/prompt/.bashprompt"
+  # - name: Source gitprompt
+  #   shell: |
+  #     nb_definitions=`grep 'custom-gitprompt' ~/.bashrc | wc -l`
+  #     if [ $nb_definitions -eq 0 ]; then
+  #       echo "source ~/prompt/bash-git-prompt/custom-gitprompt.sh" >> ~/.bashrc
+  #     fi  
 
-      exit 0
+  #     exit 0
   # Alternate prompt
   # - name: Download Polyglot prompt
   #   git:
