@@ -88,6 +88,11 @@
       name: ['kubectl','azure-cli','code-insiders']
       state: latest
       update_cache: yes
+  - name: Prepare awscli installation
+    # The awscli package is available in repositories for other package managers such as apt and yum, but you're not assured of getting the latest version unless you get it from pip
+    pip:
+      name: setuptools
+      executable: pip3
   - name: Install awscli
     # The awscli package is available in repositories for other package managers such as apt and yum, but you're not assured of getting the latest version unless you get it from pip
     pip:
