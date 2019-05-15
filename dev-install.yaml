@@ -164,3 +164,10 @@
       # Run rm -Rf  google-cloud-sdk-243.0.0-linux-x86_64.tar.gz
       # Run gcloud-init; gcloud components list ; gcloud components install beta kubectl cloud-build-local docker-credential-gcr
       exit 0
+  - name: Install kustomize
+    shell: |
+      opsys=linux 
+      curl -s https://api.github.com/repos/kubernetes-sigs/kustomize/releases/latest | grep browser_download | grep $opsys | cut -d '"' -f 4 | xargs curl -O -L
+      mv kustomize_*_${opsys}_amd64 /usr/bin/kustomize
+      chmod 755 /usr/bin/kustomize
+      exit 0
