@@ -83,11 +83,17 @@
       . /etc/os-release
       echo "deb [arch=amd64] https://packages.microsoft.com/repos/azure-cli/ $UBUNTU_CODENAME main" | tee /etc/apt/sources.list.d/azure-cli.list
       exit 0
-  - name: Install kubectl, aws cli, az cli & vscode
+  - name: Install kubectl, az cli & vscode
     apt:
-      name: ['kubectl','awscli','azure-cli','code-insiders']
+      name: ['kubectl','azure-cli','code-insiders']
       state: latest
       update_cache: yes
+  - name: Install awscli
+    # The awscli package is available in repositories for other package managers such as apt and yum, but you're not assured of getting the latest version unless you get it from pip
+    pip:
+      name: awscli
+      executable: pip3
+      extra_args: --user --upgrade
   #- name: Install Calicoctl
   #  shell: curl -O -L  https://github.com/projectcalico/calicoctl/releases/download/v3.6.1/calicoctl -o /bin/bash/calicoctl
   - name: Install kubeval to validate K8S manifests
