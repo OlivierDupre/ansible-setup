@@ -90,22 +90,24 @@
       update_cache: yes
 
   # The awscli package is available in repositories for other package managers such as apt and yum, but you're not assured of getting the latest version unless you get it from pip
-  - name: Save logname (aka user) home as a variable
-    # https://stackoverflow.com/a/7359006
-    shell: > 
-      echo $(getent passwd $SUDO_USER | cut -d: -f6)
-    register: logname_home
-  - name: Prepare awscli installation in virtualenv
-    pip:
-      name: virtualenv
-      executable: pip3
-  - name: Use virtualenv for awscli installation
-    shell: virtualenv {{logname_home}}/aws-pip-virtualenv
+- hosts: dev
+  tasks:
   - name: Install awscli
     pip:
       name: awscli
       executable: pip3
       extra_args: --upgrade
+- name: Add pip install dir to PATH
+  shell: | 
+    nb_definitions=`grep .local/bin ~/.bashrc | wc -l`
+    if [ $nb_definitions -eq 0 ]; then
+      echo 'export PATH="$HOME/.local/bin:$PATH"'  >> ~/.bashrc
+    fi
+    exit 0
+
+- hosts: dev
+  become: yes
+  tasks:
   #- name: Install Calicoctl
   #  shell: curl -O -L  https://github.com/projectcalico/calicoctl/releases/download/v3.6.1/calicoctl -o /bin/bash/calicoctl
   - name: Install kubeval to validate K8S manifests
