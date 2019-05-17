@@ -10,8 +10,8 @@
       if [ -f ~/.bash_aliases ]; then
         nb_definitions=`grep ALIAS ~/.bash_aliases | wc -l`
         if [ $nb_definitions -eq 0 ]; then
-          echo "for ALIAS in '(ls -a ~/.rc)'; do" >> ~/.bash_aliases
-          echo "if [ -f \$ALIAS ]; then source \$ALIAS; fi" >> ~/.bash_aliases
+          echo "for ALIAS in \`(ls -a ~/.rc)\`; do" > ~/.bash_aliases
+          echo "if [[ -f ~/.rc/\$ALIAS ]]; then source ~/.rc/\$ALIAS; fi" >> ~/.bash_aliases
           echo "done" >> ~/.bash_aliases
         fi
       fi

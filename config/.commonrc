@@ -84,5 +84,3 @@ extract () {
 function ssh-tmux() { 
 	ssh -t "$1" tmux a || ssh -t "$1" tmux; 
 }
-
-echo "Sourc'd Common aliases"

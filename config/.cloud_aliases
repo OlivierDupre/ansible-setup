@@ -6,5 +6,3 @@ if [ -f ~/google-cloud-sdk/completion.bash.inc ]; then source ~/google-cloud-sdk
 
 local_path=`which aws_completer`
 complete -C '${local_path}' aws;
-
-echo "Sourc'd Cloud aliases"
