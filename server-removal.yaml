@@ -4,7 +4,7 @@
   tasks:
   - name: Remove useless packages
     apt: 
-      name: ['simple-scan','onboard*','libreoffice*','media-player*','rhythmbox*','vlc*','gimp*','pix*','thunderbird*','hexchat*','transmission*','tomboy']
+      name: ['simple-scan','onboard*','libreoffice*','media-player*','rhythmbox*','vlc*','gimp*','pix*','thunderbird*','hexchat*','transmission*','tomboy','cmatrix','imagemagick','inkscape','openshot',blender','asunder']
       state: absent
       autoclean: yes
       autoremove: yes
