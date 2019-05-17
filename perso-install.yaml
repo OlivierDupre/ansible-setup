@@ -4,7 +4,8 @@
   tasks:
   - name: Install personal packages
     apt:
-      name: ['most','asunder','pdfsam','flac','gparted','openshot','timeshift','playonlinux','gettext','colordiff','meld','toilet','cmatrix','asciinema','snapd']
+      #name: ['most','asunder','pdfsam','flac','gparted','openshot','timeshift','playonlinux','gettext','colordiff','meld','toilet','cmatrix','asciinema','snapd']
+      name: ['most','asunder','pdfsam','flac','gparted','openshot','gettext','colordiff','meld','toilet','cmatrix','asciinema','snapd']
       update_cache: yes
       state: latest
   - name: Remove useless packages
