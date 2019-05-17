@@ -1,7 +1,7 @@
 ---
 - hosts: master
   tasks:
-  - name: Wait while the platform is up and running
+  - name: Wait 'till the platform is up and running
     shell: sleep 60
   - name: Create a kube Service Account dedicated to tiller
     shell: |
