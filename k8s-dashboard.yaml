@@ -1,5 +1,5 @@
 ---
-- hosts: master
+- hosts: dev
   # https://kubernetes.io/docs/concepts/cluster-administration/addons/#visualization-amp-control
   # https://github.com/kubernetes/dashboard#kubernetes-dashboard
   tasks:

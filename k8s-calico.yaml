@@ -1,5 +1,5 @@
 ---
-- hosts: master
+- hosts: dev
   tasks:
   # https://kubernetes.io/docs/setup/independent/create-cluster-kubeadm/#pod-network
   # https://docs.projectcalico.org/v3.5/usage/calicoctl/install
