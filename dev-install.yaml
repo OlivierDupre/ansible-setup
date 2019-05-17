@@ -1,4 +1,14 @@
 ---
+- hosts: all
+  become: yes
+  tasks:
+  # https://medium.com/@Alibaba_Cloud/how-to-install-and-deploy-kubernetes-on-ubuntu-16-04-6769fd1646db
+  - name: Disable swap as it is mandatory for K8S installation and discouraged for SSD
+    shell: >
+      sed -i.bak '/swapfile/d' /etc/fstab;
+      swapoff -a;
+      exit
+
 - hosts: dev
   become: yes
   tasks:
