@@ -21,9 +21,9 @@
       fi
       rm -f ~/.common_aliases
       exit 0
-  - name: Define git aliases
+  - name: Copy git aliases
     copy:
-      src: config/gitconfig
+      src: config/git.aliases
       dest: "~/git.aliases"
   - name: Setup git aliases
     shell: |
@@ -36,7 +36,6 @@
         fi
       fi
       rm -f ~/git.aliases
-      
       exit 0
   - name: Define bash 4 functions 
     copy:
