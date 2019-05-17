@@ -37,7 +37,7 @@
     apt:
       # https://docs.docker.com/install/linux/docker-ce/ubuntu/#install-docker-ce-1
       #name: docker-ce={{ docker_version }}
-      name: docker-ce
+      name: ['docker-ce','docker-ce-cli','docker-containerd']
       update_cache: yes
 
   - name: Define Docker daemon options
@@ -52,20 +52,3 @@
 # Optionnally, run these to add run Docker without sudo. This is dangerous and it's highly recommended NOT to do this.
   # groupadd docker
   # usermod -aG docker $USER
-
-- hosts: dev
-  tasks:
-  # Save main user home path, used in the template
-  - name: Add docker aliases
-    copy:
-      src: docker_aliases
-      dest: "~/.docker_aliases"
-  - name: Load K8S aliases
-    shell: |
-      nb_definitions=`grep docker_aliases ~/.bash_aliases | wc -l`
-      if [ $nb_definitions -eq 0 ]; then
-        echo "if [ -f ~/.docker_aliases ]; then"  >> ~/.bash_aliases
-        echo "  . ~/.docker_aliases"  >> ~/.bash_aliases
-        echo "fi"  >> ~/.bash_aliases
-      fi
-      exit 0
