@@ -1,5 +1,5 @@
 ---
-- hosts: all
+- hosts: dev
   tasks:
   - name: Define global gitignore 
     copy:
@@ -59,7 +59,6 @@
       exit 0
     args:
       executable: /bin/bash
-  
   - name: Source kubectl completion
     shell: |
       if [ -f ~/.bashrc ]; then
