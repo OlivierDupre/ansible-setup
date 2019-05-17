@@ -7,13 +7,12 @@
       dest: "~/.rc/."
   - name: Setup all RCs
     shell: |
-      if [ -f ~/.bash_aliases ]; then
-        nb_definitions=`grep ALIAS ~/.bash_aliases | wc -l`
-        if [ $nb_definitions -eq 0 ]; then
-          echo "for ALIAS in \`(ls -a ~/.rc)\`; do" > ~/.bash_aliases
-          echo "if [[ -f ~/.rc/\$ALIAS ]]; then source ~/.rc/\$ALIAS; fi" >> ~/.bash_aliases
-          echo "done" >> ~/.bash_aliases
-        fi
+      touch ~/.bash_aliases
+      nb_definitions=`grep ALIAS ~/.bash_aliases | wc -l`
+      if [ $nb_definitions -eq 0 ]; then
+        echo "for ALIAS in \`(ls -a ~/.rc)\`; do" > ~/.bash_aliases
+        echo "if [[ -f ~/.rc/\$ALIAS ]]; then source ~/.rc/\$ALIAS; fi" >> ~/.bash_aliases
+        echo "done" >> ~/.bash_aliases
       fi
       exit 0
   - name: Define global gitignore 
@@ -40,22 +39,22 @@
     args:
       executable: /bin/bash
   - name: Check if kube-ps1 is already downloaded
-    shell: ls ~/.rc/prompts/kube-ps1 2>/dev/null
-    register: kube-ps1
+    shell: echo `ls ~/.rc/prompts | grep kube-ps1`
+    register: kubeps1
   - name: Download Kube-ps1 prompt
     git:
       repo: 'https://github.com/jonmosco/kube-ps1.git'
       dest: ~/.rc/prompts/kube-ps1
-    when: kube-ps1.stdout == ""
+    when: kubeps1.stdout == ""
   # Alternate prompts
   - name: Check if bash-git-prompt is already downloaded
-    shell: ls ~/.rc/prompts/bash-git-prompt 2>/dev/null
-    register: bash-git-prompt
+    shell: echo `ls ~/.rc/prompts | grep bash-git-prompt`
+    register: bashgitprompt
   - name: Download git prompt
     git:
       repo: 'https://github.com/OlivierDupre/bash-git-prompt.git'
       dest: ~/.rc/prompts/bash-git-prompt
-    when: bash-git-prompt.stdout == ""
+    when: bashgitprompt.stdout == ""
   # - name: Define gitprompt options
   #   copy:
   #     src: prompt/gitprompt
