@@ -1,54 +1,36 @@
 ---
 - hosts: dev
   tasks:
+  - name: Copy aliases
+    copy:
+      src: config/
+      dest: "~/.rc/."
+  - name: Setup all RCs
+    shell: |
+      if [ -f ~/.bash_aliases ]; then
+        nb_definitions=`grep ALIAS ~/.bash_aliases | wc -l`
+        if [ $nb_definitions -eq 0 ]; then
+          echo "for ALIAS in '(ls -a ~/.rc)'; do" >> ~/.bash_aliases
+          echo "if [ -f \$ALIAS ]; then source \$ALIAS; fi" >> ~/.bash_aliases
+          echo "done" >> ~/.bash_aliases
+        fi
+      fi
+      exit 0
   - name: Define global gitignore 
     copy:
       src: .gitignore
       dest: "~/.gitignore"
   - name: Setup Git global ignore
     shell: git config --global --replace-all core.excludesfile '~/.gitignore'
-  - name: Copy common aliases
-    copy:
-      src: config/.common_aliases
-      dest: "~/.common_aliases"
-  - name: Setup common aliases
-    shell: |
-      if [ -f ~/.bash_aliases ]; then
-        nb_definitions=`grep distUpgrade ~/.bash_aliases | wc -l`
-        if [ $nb_definitions -eq 0 ]; then
-          cat ~/.common_aliases >> ~/.bash_aliases
-        fi
-      fi
-      rm -f ~/.common_aliases
-      exit 0
-  - name: Copy git aliases
-    copy:
-      src: config/git.aliases
-      dest: "~/git.aliases"
   - name: Setup git aliases
     shell: |
       if [ -f ~/.gitconfig ]; then
         nb_definitions=`grep show-tree ~/.gitconfig | wc -l`
-        if [ $nb_definitions -gt 0 ]; then
-          echo "Git aliases already defined"
-        else
-          cat ~/git.aliases >> ~/.gitconfig
+        if [ $nb_definitions -eq 0 ]; then
+          cat ~/.rc/git/aliases >> ~/.gitconfig
         fi
       fi
-      rm -f ~/git.aliases
       exit 0
-  - name: Define bash 4 functions 
-    copy:
-      src: bash4rc
-      dest: "~/.bash4rc"
-  - name: Setup bash 4 options
-    shell: |
-      nb_definitions=`grep bash4rc ~/.bashrc | wc -l`
-      if [ $nb_definitions -eq 0 ]; then
-        echo "if [ -f ~/.bash4rc ]; then source ~/.bash4rc;  fi" >> ~/.bashrc
-      fi
-      
-      exit 0      
   - name: Create ssh-keygen if it does not already exist
     shell: |
       if [ ! -f ~/.ssh/id_rsa ]; then
@@ -57,76 +39,25 @@
       exit 0
     args:
       executable: /bin/bash
-  - name: Source kubectl completion
-    shell: |
-      if [ -f ~/.bashrc ]; then
-        nb_definitions=`grep 'kubectl completion' ~/.bashrc | wc -l`
-        if [ $nb_definitions -eq 0 ]; then
-          echo "source <(kubectl completion bash)" ~/.bashrc
-          echo "source <(kubectl completion bash | sed s/kubectl/k/g)" ~/.bashrc
-        fi
-      fi
-
-      exit 0
-  - name: Setup AWS CLI autocompletion
-    shell: |
-      local_path=`which aws_completer`
-      complete -C '${local_path}' aws;
-      exit 0
   - name: Download Kube-ps1 prompt
     git:
       repo: 'https://github.com/jonmosco/kube-ps1.git'
-      dest: ~/prompt/kube-ps1
-  - name: Add a new PS1 dedicated to Kubernetes
-    shell: |
-      nb_definitions=`grep 'kube-ps1.sh' ~/.bashrc | wc -l`
-      if [ $nb_definitions -eq 0 ]; then
-        echo "source ~/prompt/kube-ps1/kube-ps1.sh" >> ~/.bashrc
-      fi 
-      exit 0
+      dest: ~/.rc/prompts/kube-ps1
+  # Alternate prompts
   - name: Download git prompt
     git:
       repo: 'https://github.com/OlivierDupre/bash-git-prompt.git'
-      dest: ~/prompt/bash-git-prompt
-  - name: Define gitprompt options
-    copy:
-      src: prompt/gitprompt
-      dest: "~/prompt/bash-git-prompt/custom-gitprompt.sh"
-  - name: Define bashprompt options
-    copy:
-      src: prompt/bashprompt
-      dest: "~/prompt/.bashprompt"
-  # - name: Source gitprompt
-  #   shell: |
-  #     nb_definitions=`grep 'custom-gitprompt' ~/.bashrc | wc -l`
-  #     if [ $nb_definitions -eq 0 ]; then
-  #       echo "source ~/prompt/bash-git-prompt/custom-gitprompt.sh" >> ~/.bashrc
-  #     fi  
-
-  #     exit 0
-  # Alternate prompt
+      dest: ~/.rc/prompts/bash-git-prompt
+  # - name: Define gitprompt options
+  #   copy:
+  #     src: prompt/gitprompt
+  #     dest: "~/.rc/prompts/bash-git-prompt/custom-gitprompt.sh"
   # - name: Download Polyglot prompt
   #   git:
   #     repo: 'https://github.com/agkozak/polyglot.git'
-  #     dest: ~/prompt/polyglot
-  # - name: Source gitprompt
-  #   shell: |
-  #     nb_definitions=`grep 'polyglot' ~/.bashrc | wc -l`
-  #     if [ $nb_definitions -eq 0 ]; then
-  #       echo "source ~/prompt/polyglot/polyglot.sh" >> ~/.bashrc
-  #     fi  
-
-  #     exit 0
+  #     dest: ~/.rc/prompts/polyglot
   # - name: Download Polyglot-Kube-ps1 prompt
   #   git:
   #     repo: 'https://github.com/agkozak/polyglot-kube-ps1.git'
   #     dest: ~/prompt/polyglot-kube-ps1
-  # - name: Source polyglot-kube-ps1
-  #   shell: |
-  #     nb_definitions=`grep 'polyglot-kube-ps1' ~/.bashrc | wc -l`
-  #     if [ $nb_definitions -eq 0 ]; then
-  #       echo "source ~/prompt/polyglot-kube-ps1/polyglot-kube-ps1.sh" >> ~/.bashrc
-  #     fi  
-
-  #     exit 0
 

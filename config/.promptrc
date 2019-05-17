@@ -1,0 +1,6 @@
+source ~/.rc/prompts/kube-ps1/kube-ps1.sh
+source ~/.rc/prompts/gitprompt
+#source ~/.rc/prompts/polyglot/polyglot.sh
+#source ~/.rc/prompts/polyglot-kube-ps1/polyglot-kube-ps1.sh
+
+echo "Sourc'd prompts"

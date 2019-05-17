@@ -1,0 +1,14 @@
+alias k='kubectl'
+alias kubectl='kubectl.1.14'
+
+if [ ! -f ~/.rc/kubectl.completion.bash.inc ]; then kubectl completion bash > ~/.rc/kubectl.completion.bash.inc; fi
+if [ -f ~/.rc/kubectl.completion.bash.inc ]; then source ~/.rc/kubectl.completion.bash.inc; fi
+
+if [ ! -f ~/.rc/k.completion.bash.inc ]; then kubectl completion bash | sed s/kubectl/k/g > ~/.rc/k.completion.bash.inc; fi
+if [ -f ~/.rc/k.completion.bash.inc ]; then source ~/.rc/k.completion.bash.inc; fi
+
+function kdash(){
+    kubectl -n kube-system describe secret $(kubectl -n kube-system get secret | grep admin-user | awk '{print $1}')
+    echo -e "\n\thttp://localhost:8001/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/\n"
+    kubectl proxy
+}

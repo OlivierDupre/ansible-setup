@@ -32,6 +32,30 @@ alias mvnSourcesAndDocs="mvn clean install dependency:sources dependency:resolve
 
 alias goIndexedDb="cd ~/.mozilla/firefox/*.default/storage/permanent/"
 
+# Case-insensitive globbing (used in pathname expansion)
+shopt -s nocaseglob
+
+# Append to the Bash history file, rather than overwriting it
+shopt -s histappend
+
+# Autocorrect typos in path names when using `cd`
+shopt -s cdspell
+
+# Enable some Bash 4 features when possible:
+# * `autocd`, e.g. `**/qux` will enter `./foo/bar/baz/qux`
+# * Recursive globbing, e.g. `echo **/*.txt`
+for option in autocd globstar; do
+	shopt -s "$option" 2> /dev/null
+done
+
+# Add tab completion for SSH hostnames based on ~/.ssh/config
+# ignoring wildcards
+[[ -e "$HOME/.ssh/config" ]] && complete -o "default" \
+	-o "nospace" \
+	-W "$(grep "^Host" ~/.ssh/config | \
+	grep -v "[?*]" | cut -d " " -f2 | \
+	tr ' ' '\n')" scp sftp ssh
+
 fkill9(){
     ps aux | grep "$1" | grep -v grep | awk '{print $2;}' | while read p; do kill -9 $p; done
 }
@@ -60,3 +84,5 @@ extract () {
 function ssh-tmux() { 
 	ssh -t "$1" tmux a || ssh -t "$1" tmux; 
 }
+
+echo "Sourc'd Common aliases"
