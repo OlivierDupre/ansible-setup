@@ -1,6 +1,16 @@
 ---
 - hosts: master
   tasks:
+  - name: Install Snaps
+    shell: |
+      snap install helm --classic
+  - name: Add snap to the PATH
+    shell: | 
+      nb_definitions=`grep /snap/bin ~/.bashrc | wc -l`
+      if [ $nb_definitions -eq 0 ]; then
+        echo 'export PATH="/snap/bin:$PATH"'  >> ~/.bashrc
+      fi
+      exit 0
   - name: Wait 'till the platform is up and running
     shell: sleep 60
   - name: Create a kube Service Account dedicated to tiller
@@ -10,6 +20,6 @@
       kubectl patch deploy --namespace kube-system tiller-deploy -p '{"spec":{"template":{"spec":{"serviceAccount":"tiller"}}}}';
       exit 0;
   - name: Install Tiller
-    shell: helm init --history-max 200  --service-account tiller --upgrade
+    shell: source ~/.bashrc && helm init --history-max 200  --service-account tiller --upgrade
   - name: Update helm repos
     shell: helm repo update
