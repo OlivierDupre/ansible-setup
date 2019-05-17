@@ -37,8 +37,10 @@
     apt:
       # https://docs.docker.com/install/linux/docker-ce/ubuntu/#install-docker-ce-1
       #name: docker-ce={{ docker_version }}
-      name: ['docker-ce','docker-ce-cli','containerd.io']
+      #name: ['docker-ce','docker-ce-cli','containerd.io']
+      name: ['docker.io']
       update_cache: yes
+      cache_valid_time: 1
 
   - name: Define Docker daemon options
     # Read options from https://docs.docker.com/engine/reference/commandline/dockerd/#daemon-configuration-file
