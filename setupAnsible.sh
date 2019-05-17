@@ -34,15 +34,15 @@ fi
 
 echo "Running next commands as "$SUDO_USER
 sudo -u $SUDO_USER bash << EOF
-if [ ! -f ~/.ssh/id_rsa ]; then
-  ssh-keygen -f ~/.ssh/id_rsa -q -N ''
+if [ ! -f ~/.ssh/id_rsa_local ]; then
+  ssh-keygen -f ~/.ssh/id_rsa_local -q -N ''
 fi
 
-ssh-copy-id -i ~/.ssh/id_rsa.pub $SUDO_USER@$(ifconfig | sed -En 's/127.0.0.1//;s/.*inet (addr:)?(([0-9]*\.){3}[0-9]*).*/\2/p' | head -n1)
-ssh-copy-id -i ~/.ssh/id_rsa.pub $SUDO_USER@$(ifconfig | sed -En 's/127.0.0.1//;s/.*inet (addr:)?(([0-9]*\.){3}[0-9]*).*/\2/p' | tail -n1)
+ssh-copy-id -i ~/.ssh/id_rsa_local.pub $SUDO_USER@$(ifconfig | sed -En 's/127.0.0.1//;s/.*inet (addr:)?(([0-9]*\.){3}[0-9]*).*/\2/p' | head -n1)
+ssh-copy-id -i ~/.ssh/id_rsa_local.pub $SUDO_USER@$(ifconfig | sed -En 's/127.0.0.1//;s/.*inet (addr:)?(([0-9]*\.){3}[0-9]*).*/\2/p' | tail -n1)
 
 ssh-agent bash
-ssh-add ~/.ssh/id_rsa
+ssh-add ~/.ssh/id_rsa_local
 
 ansible all -m ping
 echo "Finished running commands as "$SUDO_USER
