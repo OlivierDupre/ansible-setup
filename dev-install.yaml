@@ -12,35 +12,11 @@
       git clone https://github.com/srsudar/eg /opt/eg;
       ln -s /opt/eg/eg_exec.py /usr/local/bin/eg;
       exit 0
-
-- hosts: dev
-  tasks:
-  - name: Install SDKMan
-    shell: curl -s "https://get.sdkman.io" | bash
-    args:
-      warn: false
-  - name: Install SDKMan
-    shell: |
-      cd "{{ ansible_env.HOME }}/.sdkman/bin/"
-      source ./sdkman-init.sh
-      sdk install java && sdk install kotlin && sdk install maven && sdk install gradle && sdk install springboot
-      cd
-      exit 0
-  - name: Install NVM
-    shell: >
-      curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.34.0/install.sh | bash
-    args:
-      creates: "{{ ansible_env.HOME }}/.nvm/nvm.sh"
-      warn: false
-  - name: Install Node
-    shell: |
-      source "{{ ansible_env.HOME }}/.nvm/nvm.sh"
-      nvm install node
-      exit 0
-
-- hosts: dev
-  become: yes
-  tasks:
+  - name: Install draw.io
+    shell: curl -L https://github.com/jgraph/drawio-desktop/releases/download/v9.3.1/draw.io-amd64-9.3.1.deb -o /tmp/draw.io-amd64-9.3.1.deb  
+      && sudo dpkg -i /tmp/draw.io-amd64-9.3.1.deb 
+      && rm /tmp/draw.io-amd64-9.3.1.deb
+      && exit 0
   - name: Install Snaps
     shell: |
       snap install fkill postman keepassxc
@@ -56,10 +32,6 @@
         echo 'export PATH="/snap/bin:$PATH"'  >> ~/.bashrc
       fi
       exit 0
-  - name: Install draw.io
-    shell: curl -L https://github.com/jgraph/drawio-desktop/releases/download/v9.3.1/draw.io-amd64-9.3.1.deb -o /tmp/draw.io-amd64-9.3.1.deb  
-      && sudo dpkg -i /tmp/draw.io-amd64-9.3.1.deb 
-      && rm /tmp/draw.io-amd64-9.3.1.deb
   - name: Prepare VSCode installation
     shell: |
       curl https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.gpg;
@@ -79,8 +51,8 @@
       exit 0
   - name: Prepare Azure CLI installation
     shell: |
-      curl -sL https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor | tee /etc/apt/trusted.gpg.d/microsoft.asc.gpg > /dev/null
       . /etc/os-release
+      curl -sL https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor | tee /etc/apt/trusted.gpg.d/microsoft.asc.gpg > /dev/null
       echo "deb [arch=amd64] https://packages.microsoft.com/repos/azure-cli/ $UBUNTU_CODENAME main" | tee /etc/apt/sources.list.d/azure-cli.list
       exit 0
   - name: Install kubectl, az cli & vscode
@@ -88,26 +60,6 @@
       name: ['kubectl','azure-cli','code-insiders']
       state: latest
       update_cache: yes
-
-  # The awscli package is available in repositories for other package managers such as apt and yum, but you're not assured of getting the latest version unless you get it from pip
-- hosts: dev
-  tasks:
-  - name: Install awscli
-    pip:
-      name: awscli
-      executable: pip3
-      extra_args: --upgrade
-- name: Add pip install dir to PATH
-  shell: | 
-    nb_definitions=`grep .local/bin ~/.bashrc | wc -l`
-    if [ $nb_definitions -eq 0 ]; then
-      echo 'export PATH="$HOME/.local/bin:$PATH"'  >> ~/.bashrc
-    fi
-    exit 0
-
-- hosts: dev
-  become: yes
-  tasks:
   #- name: Install Calicoctl
   #  shell: curl -O -L  https://github.com/projectcalico/calicoctl/releases/download/v3.6.1/calicoctl -o /bin/bash/calicoctl
   - name: Install kubeval to validate K8S manifests
@@ -142,6 +94,13 @@
         ln -sf /opt/kubectx//completion/kubectx.bash $COMPDIR/kubectx
       fi
       exit 0
+  - name: Install kustomize
+    shell: |
+      opsys=linux 
+      curl -s https://api.github.com/repos/kubernetes-sigs/kustomize/releases/latest | grep browser_download | grep $opsys | cut -d '"' -f 4 | xargs curl -O -L
+      mv kustomize_*_${opsys}_amd64 /usr/bin/kustomize
+      chmod 755 /usr/bin/kustomize
+      exit 0
   - name: Install Dive... to dive into Docker layers
     shell: |
       nb_definitions=`apt list dive 2> /dev/null | grep install | wc -l`
@@ -164,10 +123,40 @@
       # Run rm -Rf  google-cloud-sdk-243.0.0-linux-x86_64.tar.gz
       # Run gcloud-init; gcloud components list ; gcloud components install beta kubectl cloud-build-local docker-credential-gcr
       exit 0
-  - name: Install kustomize
+
+- hosts: dev
+  tasks:
+  - name: Install SDKMan
+    shell: curl -s "https://get.sdkman.io" | bash
+    args:
+      warn: false
+  - name: Install Java, Kotlin, Maven, Gradle, Springboot...
     shell: |
-      opsys=linux 
-      curl -s https://api.github.com/repos/kubernetes-sigs/kustomize/releases/latest | grep browser_download | grep $opsys | cut -d '"' -f 4 | xargs curl -O -L
-      mv kustomize_*_${opsys}_amd64 /usr/bin/kustomize
-      chmod 755 /usr/bin/kustomize
+      cd "{{ ansible_env.HOME }}/.sdkman/bin/"
+      source ./sdkman-init.sh
+      sdk install java && sdk install kotlin && sdk install maven && sdk install gradle && sdk install springboot
+      exit 0
+  - name: Install NVM
+    shell: >
+      curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.34.0/install.sh | bash
+    args:
+      creates: "{{ ansible_env.HOME }}/.nvm/nvm.sh"
+      warn: false
+  - name: Install Node
+    shell: |
+      source "{{ ansible_env.HOME }}/.nvm/nvm.sh"
+      nvm install node
+      exit 0
+  # The awscli package is available in repositories for other package managers such as apt and yum, but you're not assured of getting the latest version unless you get it from pip
+  - name: Install awscli
+    pip:
+      name: awscli
+      executable: pip3
+      extra_args: --upgrade
+  - name: Add pip install dir to PATH
+    shell: | 
+      nb_definitions=`grep .local/bin ~/.bashrc | wc -l`
+      if [ $nb_definitions -eq 0 ]; then
+        echo 'export PATH="$HOME/.local/bin:$PATH"'  >> ~/.bashrc
+      fi
       exit 0
