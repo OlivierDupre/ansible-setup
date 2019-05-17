@@ -65,9 +65,9 @@
       curl -sL https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor | tee /etc/apt/trusted.gpg.d/microsoft.asc.gpg > /dev/null
       echo "deb [arch=amd64] https://packages.microsoft.com/repos/azure-cli/ $UBUNTU_CODENAME main" | tee /etc/apt/sources.list.d/azure-cli.list
       exit 0
-  - name: Install kubectl, az cli & vscode
+  - name: Install az cli & vscode (kubectl will be installed with gcloud)
     apt:
-      name: ['kubectl','azure-cli','code-insiders']
+      name: ['azure-cli','code-insiders']
       state: latest
       update_cache: yes
   #- name: Install Calicoctl
@@ -131,7 +131,7 @@
       tar -zxf google-cloud-sdk-243.0.0-linux-x86_64.tar.gz ;
       # Run ./google-cloud-sdk/install.sh
       # Run rm -Rf  google-cloud-sdk-243.0.0-linux-x86_64.tar.gz
-      # Run gcloud-init; gcloud components list ; gcloud components install beta kubectl cloud-build-local docker-credential-gcr
+      # Run gcloud auth login;gcloud init; gcloud components update; gcloud components install alpha beta kubectl cloud-build-local docker-credential-gcr
       exit 0
   - name: Add current user to VBox group to provide access to shared folders
     shell: adduser $SUDO_USER vboxsf

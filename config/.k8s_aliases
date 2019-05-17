@@ -1,5 +1,5 @@
 alias k='kubectl'
-alias kubectl='kubectl.1.14'
+if [ -f ~/google-cloud-sdk/bin/kubectl.1.14 ]; then alias kubectl='kubectl.1.14'; fi
 
 if [ ! -f ~/.rc/kubectl.completion.bash.inc ]; then kubectl completion bash > ~/.rc/kubectl.completion.bash.inc; fi
 if [ -f ~/.rc/kubectl.completion.bash.inc ]; then source ~/.rc/kubectl.completion.bash.inc; fi
