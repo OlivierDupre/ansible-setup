@@ -7,9 +7,9 @@
       dest: "~/.gitignore"
   - name: Setup Git global ignore
     shell: git config --global --replace-all core.excludesfile '~/.gitignore'
-  - name: Define gitprompt options
+  - name: Copy common aliases
     copy:
-      src: config/alias
+      src: config/.common_aliases
       dest: "~/.common_aliases"
   - name: Setup common aliases
     shell: |
@@ -20,7 +20,6 @@
         fi
       fi
       rm -f ~/.common_aliases
-      
       exit 0
   - name: Define git aliases
     copy:
@@ -70,15 +69,6 @@
       fi
 
       exit 0
-
-# - hosts: master
-#   become: yes
-#   tasks:
-#   - name: Add current user to VBox group to provide access to shared folders
-#     shell: adduser $SUDO_USER vboxsf
-
-- hosts: dev
-  tasks:
   - name: Setup AWS CLI autocompletion
     shell: |
       local_path=`which aws_completer`
