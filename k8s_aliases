@@ -1,4 +1,5 @@
 alias k='kubectl'
+alias kubectl='kubectl.1.14'
 
 function kdash(){
     kubectl -n kube-system describe secret $(kubectl -n kube-system get secret | grep admin-user | awk '{print $1}')
