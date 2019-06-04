@@ -32,7 +32,7 @@
       msg="{{ hostvars[item]["ansible_facts"]["env"]["LOGNAME"] }}" 
     with_items: "{{ groups['master'] }}"
   - name: Setup K8S cluster
-    shell: kubeadm init --pod-network-cidr=192.168.56.0/24 --apiserver-advertise-address=192.168.56.107
+    shell: kubeadm init --pod-network-cidr=192.168.56.0/24 --apiserver-advertise-address=192.168.56.111
     register: output
   - debug: var=output.stdout_lines
 

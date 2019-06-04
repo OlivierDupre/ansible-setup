@@ -30,7 +30,7 @@
   - name: Install Snaps
     shell: |
       snap install fkill postman keepassxc
-      # snap install code-insiders --classic  # Load config with extension Settings Sync. Github token store separately, privately in notes with Gist Id.
+      snap install code-insiders --classic  # Load config with extension Settings Sync. Github token store separately, privately in notes with Gist Id.
       # snap install intellij-idea-community --classic
       # snap install kata-containers --classic
       snap install helm --classic
@@ -65,9 +65,9 @@
       curl -sL https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor | tee /etc/apt/trusted.gpg.d/microsoft.asc.gpg > /dev/null
       echo "deb [arch=amd64] https://packages.microsoft.com/repos/azure-cli/ $UBUNTU_CODENAME main" | tee /etc/apt/sources.list.d/azure-cli.list
       exit 0
-  - name: Install az cli & vscode (kubectl will be installed with gcloud)
+  - name: Install az cli (kubectl will be installed with gcloud)
     apt:
-      name: ['azure-cli','code-insiders']
+      name: ['azure-cli']
       state: latest
       update_cache: yes
   #- name: Install Calicoctl

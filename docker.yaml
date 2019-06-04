@@ -1,5 +1,5 @@
 ---
-- hosts: all
+- hosts: master
   become: yes
   # https://github.com/kubernetes/kubernetes/blob/master/CHANGELOG-1.14.md#external-dependencies
   vars:
