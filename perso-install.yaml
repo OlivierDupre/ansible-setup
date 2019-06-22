@@ -10,7 +10,7 @@
       state: latest
   - name: Remove useless packages
     apt: 
-      name: ['simple-scan','onboard*','libreoffice*','media-player*','rhythmbox*','pix*','thunderbird*','hexchat*','transmission*','tomboy']
+      name: ['simple-scan','onboard*','libreoffice*','media-player*','rhythmbox*','pix*','thunderbird*','hexchat*','transmission*','tomboy','imagemagic*']
       state: absent
       autoclean: yes
       autoremove: yes
