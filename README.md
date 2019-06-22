@@ -15,9 +15,14 @@
 * Login to the Dashboard:
   * `http://localhost:8001/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/`
 
+## Update Docker config
+* Patch `/var/snap/microk8s/current/args/docker-daemon.json`
+* Run `sudo systemctl restart snap.microk8s.daemon-docker.service && sudo  systemctl status snap.microk8s.daemon-docker.service` or `sudo systemctl daemon-reload && sudo systemctl restart docker`
+
+## Use default Docker nvidia runtime
+`docker run --rm  -it  ubuntu  dmesg`
+`docker run --rm  -it  ubuntu  uname -a`
+
 ## Use gVisor
 `docker run --rm --runtime=runsc -it  ubuntu  dmesg`
-
-## Update Docker config
-* Patch `/var/snap/microk8s/current/args/doacker-daemon.json`
-* Run `systemctl restart snap.microk8s.daemon-docker.service &&  systemctl status snap.microk8s.daemon-docker.service && `
+`docker run --rm --runtime=runsc -it  ubuntu  uname -a`

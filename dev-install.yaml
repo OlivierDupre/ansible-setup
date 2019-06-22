@@ -36,9 +36,6 @@
       # snap install kata-containers --classic
       snap install helm --classic
       snap install --classic go
-      # Install microk8s, which does not need a VM unlike minikube https://codefresh.io/kubernetes-tutorial/local-kubernetes-linux-minikube-vs-microk8s/
-      # microk8s 1.14 switches from Docker to containerd - https://stackoverflow.com/questions/55297278/how-to-use-local-docker-images-with-microk8s
-      snap install microk8s --classic --channel=1.13/stable
   - name: Add snap to the PATH
     shell: | 
       nb_definitions=`grep /snap/bin ~/.bashrc | wc -l`

@@ -15,6 +15,9 @@
       },
       "runsc": {
          "path": "/usr/local/bin/runsc"
+      },
+      "kata-container": {
+        "path": "/snap/kata-containers/current/usr/bin/kata-runtime"
       }
    },
    "default-runtime": "runc"
