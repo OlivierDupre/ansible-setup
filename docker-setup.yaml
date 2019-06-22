@@ -1,0 +1,34 @@
+---
+- hosts: dev
+  become: yes
+  vars:
+    config_folder: "/var/snap/microk8s/current/args"
+  tasks:
+  - name: Save logname (aka user) home as a variable
+    # https://stackoverflow.com/a/7359006
+    shell: > 
+      echo $(getent passwd $SUDO_USER | cut -d: -f6)
+    register: logname_home
+  - name: Backup original config file
+    copy:
+      src: "{{ config_folder }}/docker-daemon.json"
+      dest: "{{ config_folder }}/docker-daemon.json.bkp"
+  - name: Alias docker to microk8s version
+    shell: snap alias microk8s.docker docker
+  - name: Define Docker daemon options
+    # Read options from https://docs.docker.com/engine/reference/commandline/dockerd/#daemon-configuration-file
+    template:
+      src: daemon-template.json
+      dest: "{{ config_folder }}/docker-daemon.json"
+  - name: Restart docker service
+    shell: |
+      systemctl restart snap.microk8s.daemon-docker.service
+      systemctl restart snap.microk8s.daemon-containerd.service
+      exit 0
+  # - name: Reload docker service config
+    # shell: systemctl daemon-reload 
+  # - name: Restart docker service
+  #   shell: systemctl restart docker
+# Optionnally, run these to add run Docker without sudo. This is dangerous and it's highly recommended NOT to do this.
+  # groupadd docker
+  # usermod -aG docker $USER

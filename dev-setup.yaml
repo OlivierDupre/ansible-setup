@@ -5,9 +5,6 @@
     copy:
       src: config/
       dest: "~/.rc/."
-  - name: Alias docker to microk8s version
-    become: yes
-    shell: snap alias microk8s.docker docker
   - name: Setup all RCs
     shell: |
       touch ~/.bash_aliases

@@ -1,5 +1,5 @@
 ---
-- hosts: master
+- hosts: dev
   become: yes
   # https://github.com/kubernetes/kubernetes/blob/master/CHANGELOG-1.14.md#external-dependencies
   vars:
@@ -41,16 +41,6 @@
       name: ['docker.io']
       update_cache: yes
       cache_valid_time: 1
-
-  - name: Define Docker daemon options
-    # Read options from https://docs.docker.com/engine/reference/commandline/dockerd/#daemon-configuration-file
-    template:
-      src: daemon-template.json
-      dest: /etc/docker/daemon.json
-  - name: Reload docker service config
-    shell: systemctl daemon-reload 
-  - name: Restart docker service
-    shell: systemctl restart docker
 # Optionnally, run these to add run Docker without sudo. This is dangerous and it's highly recommended NOT to do this.
   # groupadd docker
   # usermod -aG docker $USER

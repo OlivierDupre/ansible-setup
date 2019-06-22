@@ -1,7 +1,8 @@
 ---
 - import_playbook: dev-install.yaml
 - import_playbook: server-removal.yaml
-- import_playbook: docker.yaml 
+# - import_playbook: docker-install.yaml # Use docker from microk8s snap install
+- import_playbook: docker-setup.yaml 
 - import_playbook: dev-setup.yaml
 - import_playbook: k8s.yaml
 - import_playbook: k8s-server.yaml
