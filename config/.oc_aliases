@@ -1,0 +1,2 @@
+if [ ! -f ~/.rc/oc.completion.bash.inc ]; then oc completion bash > ~/.rc/oc.completion.bash.inc; fi
+if [ -f ~/.rc/oc.completion.bash.inc ]; then source ~/.rc/oc.completion.bash.inc; fi
