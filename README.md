@@ -26,3 +26,7 @@
 ## Use gVisor
 `docker run --rm --runtime=runsc -it  ubuntu  dmesg`
 `docker run --rm --runtime=runsc -it  ubuntu  uname -a`
+
+## Use kata-container
+`docker run --rm --runtime=kata-container -it  ubuntu  dmesg`
+`docker run --rm --runtime=kata-container -it  ubuntu  uname -a`
