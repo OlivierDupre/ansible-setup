@@ -17,16 +17,17 @@
 
 ## Update Docker config
 * Patch `/var/snap/microk8s/current/args/docker-daemon.json`
-* Run `sudo systemctl restart snap.microk8s.daemon-docker.service && sudo  systemctl status snap.microk8s.daemon-docker.service` or `sudo systemctl daemon-reload && sudo systemctl restart docker`
+* Run `sudo systemctl restart snap.microk8s.daemon-docker.service && sudo  systemctl status snap.microk8s.daemon-docker.service` 
+  * or `sudo systemctl daemon-reload && sudo systemctl restart docker`
 
 ## Use default Docker nvidia runtime
-`docker run --rm  -it  ubuntu  dmesg`
-`docker run --rm  -it  ubuntu  uname -a`
+* `docker run --rm  -it  ubuntu  dmesg`
+* `docker run --rm  -it  ubuntu  uname -a`
 
 ## Use gVisor
-`docker run --rm --runtime=runsc -it  ubuntu  dmesg`
-`docker run --rm --runtime=runsc -it  ubuntu  uname -a`
+* `docker run --rm --runtime=runsc -it  ubuntu  dmesg`
+* `docker run --rm --runtime=runsc -it  ubuntu  uname -a`
 
 ## Use kata-container
-`docker run --rm --runtime=kata-container -it  ubuntu  dmesg`
-`docker run --rm --runtime=kata-container -it  ubuntu  uname -a`
+* `docker run --rm --runtime=kata-container -it  ubuntu  dmesg`
+* `docker run --rm --runtime=kata-container -it  ubuntu  uname -a`
