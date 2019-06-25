@@ -1,0 +1,10 @@
+---
+- hosts: dev
+  become: yes
+  tasks:
+  - name: Download gVisor runtime
+    get_url:
+      url: https://storage.googleapis.com/gvisor/releases/nightly/latest/runsc
+      dest: /usr/local/bin/runsc
+      checksum: sha512:https://storage.googleapis.com/gvisor/releases/nightly/latest/runsc.sha512
+      mode: '0755'
