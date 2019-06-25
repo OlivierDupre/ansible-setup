@@ -2,11 +2,8 @@
 - hosts: dev
   become: yes
   vars:
-    # This used to be a valid path with 18.06 but no longer with 18.09. One solution is to install both tracks stable and edge...
-    # Anyway, Docker support for Snap is over... https://github.com/docker/docker-snap/
-    # Does not make sense to use that file.
     config_folder: "/etc/kata-containers"
-    kata-container_folder: "/snap/kata-containers/current/usr/share/defaults/kata-containers"
+    kata_container_folder: "/snap/kata-containers/current/usr/share/defaults/kata-containers"
   tasks:
   - name: Install kata-container as a snap
     shell: snap install kata-containers --classic
@@ -17,5 +14,5 @@
       mode: 0755
   - name: Copy kata-container config and make it editable
     copy:
-      src: "{{ kata-container_folder }}/configuration.toml"
+      src: "{{ kata_container_folder }}/configuration.toml"
       dest: "{{ config_folder }}"
