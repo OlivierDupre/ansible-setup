@@ -14,7 +14,7 @@
   tasks:
   - name: Install base packages
     apt:
-      name: ['git','git-extras','wget','curl','tilix','vim','apt-transport-https','ca-certificates','software-properties-common','build-essential','libssl-dev','htop','tree','make','libc6-i386','lib32z1','libnss3','libc6','python','python3','python-pip','python3-pip','python-dev','libssl-dev','libcurl4-gnutls-dev','libexpat1-dev','unzip','python-lxml','g++','asciinema','gnupg-agent','snapd','apache2-utils','lsb-release','gnupg','gconf2','pkgconf']
+      name: ['git','git-extras','wget','curl','tilix','vim','apt-transport-https','ca-certificates','software-properties-common','build-essential','libssl-dev','htop','tree','make','libc6-i386','lib32z1','libnss3','libc6','python','python3','python-pip','python3-pip','python-dev','libssl-dev','libcurl4-gnutls-dev','libexpat1-dev','unzip','python-lxml','g++','asciinema','gnupg-agent','snapd','apache2-utils','lsb-release','gnupg','gconf2','pkgconf','libnotify4','libxss1','libappindicator1']
       update_cache: yes
       state: latest
   - name: Install eg
@@ -133,12 +133,17 @@
 
 - hosts: dev
   tasks:
+  - name: Download gcloud
+    get_url:
+      url: https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-251.0.0-linux-x86_64.tar.gz
+      dest: /tmp
+      checksum: sha256:727fa0beae4c15b4b821f6df2381fbed8b2277b77fd74ebc721bd483b49541b5
+      mode: '0755'
   - name: Install gcloud-sdk -> NEEDS MANUAL ADDITIONAL STEPS! https://cloud.google.com/sdk/docs/quickstart-linux
     shell: |
-      curl -O https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-243.0.0-linux-x86_64.tar.gz ;
-      tar -zxf google-cloud-sdk-243.0.0-linux-x86_64.tar.gz ;
-      rm google-cloud-sdk-243.0.0-linux-x86_64.tar.gz ;
-      # Run ./google-cloud-sdk/install.sh
+      tar -zxf /tmp/google-cloud-sdk-251.0.0-linux-x86_64.tar.gz -C {{ ansible_env.HOME }} ;
+      rm /tmp/google-cloud-sdk-251.0.0-linux-x86_64.tar.gz ;
+      # Run /tmp/google-cloud-sdk/install.sh
       # Run gcloud auth login;gcloud init; gcloud components update; gcloud components install alpha beta kubectl cloud-build-local docker-credential-gcr
       # Then... `gcloud container clusters get-credentials $CLUSTER_NAME --zone $ZONE --project $PROJECT_NAME`
       exit 0
