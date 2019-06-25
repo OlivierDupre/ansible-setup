@@ -14,7 +14,7 @@
   tasks:
   - name: Install base packages
     apt:
-      name: ['git','git-extras','wget','curl','tilix','vim','apt-transport-https','ca-certificates','software-properties-common','build-essential','libssl-dev','htop','tree','make','libc6-i386','lib32z1','libc6','python','python-pip','python3-pip','python-dev','libssl-dev','libcurl4-gnutls-dev','libexpat1-dev','unzip','python-lxml','g++','asciinema','gnupg-agent','snapd','apache2-utils','lsb-release','gnupg','gconf2','pkgconf']
+      name: ['git','git-extras','wget','curl','tilix','vim','apt-transport-https','ca-certificates','software-properties-common','build-essential','libssl-dev','htop','tree','make','libc6-i386','lib32z1','libnss3','libc6','python','python3','python-pip','python3-pip','python-dev','libssl-dev','libcurl4-gnutls-dev','libexpat1-dev','unzip','python-lxml','g++','asciinema','gnupg-agent','snapd','apache2-utils','lsb-release','gnupg','gconf2','pkgconf']
       update_cache: yes
       state: latest
   - name: Install eg
@@ -130,8 +130,6 @@
       curl -Lo skaffold https://storage.googleapis.com/skaffold/releases/latest/skaffold-linux-amd64
       chmod +x skaffold
       sudo mv skaffold /usr/local/bin
-  - name: Add current user to VBox group to provide access to shared folders
-    shell: adduser $SUDO_USER vboxsf
 
 - hosts: dev
   tasks:

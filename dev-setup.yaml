@@ -67,3 +67,5 @@
   #   git:
   #     repo: 'https://github.com/agkozak/polyglot-kube-ps1.git'
   #     dest: ~/prompt/polyglot-kube-ps1
+  # - name: Add current user to VBox group to provide access to shared folders
+  #   shell: adduser $SUDO_USER vboxsf
