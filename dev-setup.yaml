@@ -33,7 +33,7 @@
   - name: Create ssh-keygen if it does not already exist
     shell: |
       if [ ! -f ~/.ssh/id_rsa ]; then
-        ssh-keygen -t rsa -q -N ''
+        ssh-keygen -f id_rsa -t rsa -q   -N "''"
       fi
       exit 0
     args:
