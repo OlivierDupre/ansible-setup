@@ -82,5 +82,5 @@ extract () {
 }
 
 function ssh-tmux() { 
-	ssh -t "$1" tmux a || ssh -t "$1" tmux; 
+	ssh $* -t tmux a || ssh $* -t tmux; 
 }
