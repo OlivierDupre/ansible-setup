@@ -2,9 +2,9 @@ alias startJenkins="aws ec2 start-instances  --instance-ids ${JENKINS_INSTANCE} 
 alias stopJenkins="aws ec2 stop-instances  --instance-ids ${JENKINS_INSTANCE} --region ${JENKINS_REGION}"
 
 function sshJenkins() {
-    JENKINS_IP=`aws ec2 describe-instances  --instance-ids ${JENKINS_INSTANCE} --region ${JENKINS_REGION} | jq '.Reservations[0].Instances[0].NetworkInterfaces[0].Association.PublicIp'`
+    JENKINS_IP=`aws ec2 describe-instances  --instance-ids ${JENKINS_INSTANCE} --region ${JENKINS_REGION} | jq -r '.Reservations[0].Instances[0].NetworkInterfaces[0].Association.PublicIp'`
 
-    if [ `aws ec2 describe-instance-status  --instance-ids ${JENKINS_INSTANCE} --region ${JENKINS_REGION} | jq '.InstanceStatuses[0].InstanceState.Name'` != "running" ]
+    if [ `aws ec2 describe-instance-status  --instance-ids ${JENKINS_INSTANCE} --region ${JENKINS_REGION} | jq -r '.InstanceStatuses[0].InstanceState.Name'` != "running" ]
     then
         echo "Starting Jenkins"
         startJenkins
@@ -22,3 +22,4 @@ function sshJenkins() {
         stopJenkins
     fi
 }
+~   
