@@ -1,0 +1,24 @@
+alias startJenkins="aws ec2 start-instances  --instance-ids ${JENKINS_INSTANCE} --region ${JENKINS_REGION}"
+alias stopJenkins="aws ec2 stop-instances  --instance-ids ${JENKINS_INSTANCE} --region ${JENKINS_REGION}"
+
+function sshJenkins() {
+    JENKINS_IP=`aws ec2 describe-instances  --instance-ids ${JENKINS_INSTANCE} --region ${JENKINS_REGION} | jq '.Reservations[0].Instances[0].NetworkInterfaces[0].Association.PublicIp'`
+
+    if [ `aws ec2 describe-instance-status  --instance-ids ${JENKINS_INSTANCE} --region ${JENKINS_REGION} | jq '.InstanceStatuses[0].InstanceState.Name'` != "running" ]
+    then
+        echo "Starting Jenkins"
+        startJenkins
+    else
+        echo "Jenkins running"
+    fi
+
+    echo "ssh-tmux -i ${AWS_KEY} centos@${JENKINS_IP}"
+    ssh-tmux -i ${AWS_KEY} centos@${JENKINS_IP}
+
+    read -p "Shutdown instance? " answer
+    if [ "x$answer" != "xn" ]
+    then
+        echo "Shutting down instance"
+        stopJenkins
+    fi
+}

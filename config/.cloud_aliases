@@ -20,4 +20,5 @@ function sshEnv() {
     fi
 
     ssh-tmux -i ~/.ssh/id_rsa  olivier.dupre@${INSTANCE_IP}
+    stopEnv
 }
