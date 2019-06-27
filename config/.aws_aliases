@@ -2,7 +2,8 @@ alias startJenkins="aws ec2 start-instances  --instance-ids ${JENKINS_INSTANCE} 
 alias stopJenkins="aws ec2 stop-instances  --instance-ids ${JENKINS_INSTANCE} --region ${JENKINS_REGION}"
 
 function sshJenkins() {
-    JENKINS_IP=`aws ec2 describe-instances  --instance-ids ${JENKINS_INSTANCE} --region ${JENKINS_REGION} | jq -r '.Reservations[0].Instances[0].NetworkInterfaces[0].Association.PublicIp'`
+    # export JENKINS_FILTERS=file:///my/absolute/path/to/filters.json   # https://docs.aws.amazon.com/cli/latest/reference/ec2/describe-instances.html
+    JENKINS_IP=`aws ec2 describe-instances --region ${JENKINS_REGION}  --filters ${JENKINS_FILTERS} --query "Reservations[0].Instances[0].NetworkInterfaces[0].Association.PublicIp" | jq -r '.'`
 
     if [ `aws ec2 describe-instance-status  --instance-ids ${JENKINS_INSTANCE} --region ${JENKINS_REGION} | jq -r '.InstanceStatuses[0].InstanceState.Name'` != "running" ]
     then
