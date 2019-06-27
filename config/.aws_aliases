@@ -1,19 +1,33 @@
-alias startJenkins="aws ec2 start-instances  --instance-ids ${JENKINS_INSTANCE} --region ${JENKINS_REGION}"
-alias stopJenkins="aws ec2 stop-instances  --instance-ids ${JENKINS_INSTANCE} --region ${JENKINS_REGION}"
+function startJenkins(){
+    JENKINS_INSTANCE=`aws ec2 describe-instances --region ${JENKINS_REGION}  --filters ${JENKINS_FILTERS} --query "Reservations[0].Instances[0].InstanceId" | jq -r '.'`
+
+    if [ `aws ec2 describe-instance-status  --instance-ids ${JENKINS_INSTANCE} --region ${JENKINS_REGION} | jq -r '.InstanceStatuses[0].InstanceState.Name'` != "running" ]
+    then
+        echo "Starting Jenkins"
+        aws ec2 start-instances  --instance-ids ${JENKINS_INSTANCE} --region ${JENKINS_REGION}
+    else
+        echo "Jenkins already running"
+    fi
+}
+
+function stopJenkins(){
+    JENKINS_INSTANCE=`aws ec2 describe-instances --region ${JENKINS_REGION}  --filters ${JENKINS_FILTERS} --query "Reservations[0].Instances[0].InstanceId" | jq -r '.'`
+
+    if [ `aws ec2 describe-instance-status  --instance-ids ${JENKINS_INSTANCE} --region ${JENKINS_REGION} | jq -r '.InstanceStatuses[0].InstanceState.Name'` -eq "running" ]
+    then
+        echo "Stopping Jenkins"
+        aws ec2 stop-instances  --instance-ids ${JENKINS_INSTANCE} --region ${JENKINS_REGION}
+    else
+        echo "Jenkins already stopped"
+    fi
+}
 
 function sshJenkins() {
     # export JENKINS_FILTERS=file:///my/absolute/path/to/filters.json   # https://docs.aws.amazon.com/cli/latest/reference/ec2/describe-instances.html
     JENKINS_IP=`aws ec2 describe-instances --region ${JENKINS_REGION}  --filters ${JENKINS_FILTERS} --query "Reservations[0].Instances[0].NetworkInterfaces[0].Association.PublicIp" | jq -r '.'`
 
-    if [ `aws ec2 describe-instance-status  --instance-ids ${JENKINS_INSTANCE} --region ${JENKINS_REGION} | jq -r '.InstanceStatuses[0].InstanceState.Name'` != "running" ]
-    then
-        echo "Starting Jenkins"
-        startJenkins
-    else
-        echo "Jenkins running"
-    fi
+    startJenkins
 
-    echo "ssh-tmux -i ${AWS_KEY} centos@${JENKINS_IP}"
     ssh-tmux -i ${AWS_KEY} centos@${JENKINS_IP}
 
     read -p "Shutdown instance? " answer
