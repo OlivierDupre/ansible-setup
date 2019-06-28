@@ -1,33 +1,56 @@
+function statusJenkins(){
+    JENKINS_INSTANCE=`aws ec2 describe-instances --region ${JENKINS_REGION}  --filters ${JENKINS_FILTERS} --query "Reservations[0].Instances[0].InstanceId" | jq -r '.'`
+    
+    echo `aws ec2 describe-instance-status  --instance-ids ${JENKINS_INSTANCE} --region ${JENKINS_REGION} --query "InstanceStatuses[0].InstanceStatus.Status" | jq -r '.'`
+}
+
 function startJenkins(){
     JENKINS_INSTANCE=`aws ec2 describe-instances --region ${JENKINS_REGION}  --filters ${JENKINS_FILTERS} --query "Reservations[0].Instances[0].InstanceId" | jq -r '.'`
 
-    if [ `aws ec2 describe-instance-status  --instance-ids ${JENKINS_INSTANCE} --region ${JENKINS_REGION} | jq -r '.InstanceStatuses[0].InstanceState.Name'` != "running" ]
+    status=$(statusJenkins)
+    echo "Status: $status"
+
+    if [ "x$status" != "xok" ]
     then
-        echo "Starting Jenkins"
+        echo "Starting Jenkins ${JENKINS_INSTANCE}"
         aws ec2 start-instances  --instance-ids ${JENKINS_INSTANCE} --region ${JENKINS_REGION}
     else
-        echo "Jenkins already running"
+        echo "Jenkins ${JENKINS_INSTANCE} already running"
     fi
 }
+
 
 function stopJenkins(){
     JENKINS_INSTANCE=`aws ec2 describe-instances --region ${JENKINS_REGION}  --filters ${JENKINS_FILTERS} --query "Reservations[0].Instances[0].InstanceId" | jq -r '.'`
 
-    if [ `aws ec2 describe-instance-status  --instance-ids ${JENKINS_INSTANCE} --region ${JENKINS_REGION} | jq -r '.InstanceStatuses[0].InstanceState.Name'` -eq "running" ]
+    status=$(statusJenkins)
+
+    if [ "x$status" = "xok" ]
     then
-        echo "Stopping Jenkins"
+        echo "Stopping Jenkins ${JENKINS_INSTANCE}"
         aws ec2 stop-instances  --instance-ids ${JENKINS_INSTANCE} --region ${JENKINS_REGION}
     else
-        echo "Jenkins already stopped"
+        echo "Jenkins ${JENKINS_INSTANCE} already stopped"
     fi
 }
 
 function sshJenkins() {
     # export JENKINS_FILTERS=file:///my/absolute/path/to/filters.json   # https://docs.aws.amazon.com/cli/latest/reference/ec2/describe-instances.html
-    JENKINS_IP=`aws ec2 describe-instances --region ${JENKINS_REGION}  --filters ${JENKINS_FILTERS} --query "Reservations[0].Instances[0].NetworkInterfaces[0].Association.PublicIp" | jq -r '.'`
 
     startJenkins
 
+    status=$(statusJenkins)
+
+    while [ "x$status" != "xok" ]
+    do
+        echo -n "."
+        sleep 1
+        status=$(statusJenkins)
+    done
+
+    JENKINS_IP=`aws ec2 describe-instances --region ${JENKINS_REGION}  --filters ${JENKINS_FILTERS} --query "Reservations[0].Instances[0].NetworkInterfaces[0].Association.PublicIp" | jq -r '.'`
+
+    echo "ssh -i ${AWS_KEY} centos@${JENKINS_IP}"
     ssh-tmux -i ${AWS_KEY} centos@${JENKINS_IP}
 
     read -p "Shutdown instance? " answer
