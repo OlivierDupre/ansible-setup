@@ -60,4 +60,3 @@ function sshEc2() {
         stopEc2
     fi
 }
-~   

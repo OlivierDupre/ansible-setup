@@ -1,0 +1,46 @@
+---
+- hosts: dev
+  become: yes
+  # https://github.com/kubernetes/kubernetes/blob/master/CHANGELOG-1.14.md#external-dependencies
+  vars:
+    docker_version: "18.09.0~ce~3-0~ubuntu"
+  tasks:
+  - name: Save logname (aka user) home as a variable
+    # https://stackoverflow.com/a/7359006
+    shell: > 
+      echo $(getent passwd $SUDO_USER | cut -d: -f6)
+    register: logname_home
+  - name: Remove docker packages
+    apt: 
+      name: ['docker','docker-ce','docker-engine','docker.io','containerd','runc','containerd.io', 'docker-ce-cli']
+      state: absent
+  - name: Remove Docker snaps
+    shell: snap remove docker
+  - name: Install base packages for Docker
+    apt:
+      name: ['apt-transport-https','ca-certificates','curl','gnupg-agent','software-properties-common']
+      update_cache: yes
+      state: latest
+  - name: Retrieve offical Docker GPG key
+    shell: curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
+    args:
+      warn: false
+  - name: Find Ubuntu codename
+    shell: . /etc/os-release ; echo $UBUNTU_CODENAME
+    register: ubuntu_codename
+    ignore_errors: true
+  - name: Add Docker repository
+    apt_repository:
+      repo: "deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ ubuntu_codename.stdout_lines[0] }} stable"
+      state: present
+  - name: Install Docker
+    apt:
+      # https://docs.docker.com/install/linux/docker-ce/ubuntu/#install-docker-ce-1
+      #name: docker-ce={{ docker_version }}
+      #name: ['docker-ce','docker-ce-cli','containerd.io']
+      name: ['docker.io']
+      update_cache: yes
+      cache_valid_time: 1
+# Optionnally, run these to add run Docker without sudo. This is dangerous and it's highly recommended NOT to do this.
+  # groupadd docker
+  # usermod -aG docker $USER
