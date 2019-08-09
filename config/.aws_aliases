@@ -1,63 +1,63 @@
-function statusJenkins(){
-    JENKINS_INSTANCE=`aws ec2 describe-instances --region ${JENKINS_REGION}  --filters ${JENKINS_FILTERS} --query "Reservations[0].Instances[0].InstanceId" | jq -r '.'`
+function statusEc2(){
+    EC2_INSTANCE=`aws ec2 describe-instances --region ${EC2_REGION}  --filters ${EC2_FILTERS} --query "Reservations[0].Instances[0].InstanceId" | jq -r '.'`
     
-    echo `aws ec2 describe-instance-status  --instance-ids ${JENKINS_INSTANCE} --region ${JENKINS_REGION} --query "InstanceStatuses[0].InstanceStatus.Status" | jq -r '.'`
+    echo `aws ec2 describe-instance-status  --instance-ids ${EC2_INSTANCE} --region ${EC2_REGION} --query "InstanceStatuses[0].InstanceStatus.Status" | jq -r '.'`
 }
 
-function startJenkins(){
-    JENKINS_INSTANCE=`aws ec2 describe-instances --region ${JENKINS_REGION}  --filters ${JENKINS_FILTERS} --query "Reservations[0].Instances[0].InstanceId" | jq -r '.'`
+function startEc2(){
+    EC2_INSTANCE=`aws ec2 describe-instances --region ${EC2_REGION}  --filters ${EC2_FILTERS} --query "Reservations[0].Instances[0].InstanceId" | jq -r '.'`
 
-    status=$(statusJenkins)
+    status=$(statusEc2)
     echo "Status: $status"
 
     if [ "x$status" != "xok" ]
     then
-        echo "Starting Jenkins ${JENKINS_INSTANCE}"
-        aws ec2 start-instances  --instance-ids ${JENKINS_INSTANCE} --region ${JENKINS_REGION}
+        echo "Starting Ec2 ${EC2_INSTANCE}"
+        aws ec2 start-instances  --instance-ids ${EC2_INSTANCE} --region ${EC2_REGION}
     else
-        echo "Jenkins ${JENKINS_INSTANCE} already running"
+        echo "Ec2 ${EC2_INSTANCE} already running"
     fi
 }
 
 
-function stopJenkins(){
-    JENKINS_INSTANCE=`aws ec2 describe-instances --region ${JENKINS_REGION}  --filters ${JENKINS_FILTERS} --query "Reservations[0].Instances[0].InstanceId" | jq -r '.'`
+function stopEc2(){
+    EC2_INSTANCE=`aws ec2 describe-instances --region ${EC2_REGION}  --filters ${EC2_FILTERS} --query "Reservations[0].Instances[0].InstanceId" | jq -r '.'`
 
-    status=$(statusJenkins)
+    status=$(statusEc2)
 
     if [ "x$status" = "xok" ]
     then
-        echo "Stopping Jenkins ${JENKINS_INSTANCE}"
-        aws ec2 stop-instances  --instance-ids ${JENKINS_INSTANCE} --region ${JENKINS_REGION}
+        echo "Stopping Ec2 ${EC2_INSTANCE}"
+        aws ec2 stop-instances  --instance-ids ${EC2_INSTANCE} --region ${EC2_REGION}
     else
-        echo "Jenkins ${JENKINS_INSTANCE} already stopped"
+        echo "Ec2 ${EC2_INSTANCE} already stopped"
     fi
 }
 
-function sshJenkins() {
-    # export JENKINS_FILTERS=file:///my/absolute/path/to/filters.json   # https://docs.aws.amazon.com/cli/latest/reference/ec2/describe-instances.html
+function sshEc2() {
+    # export EC2_FILTERS=file:///my/absolute/path/to/filters.json   # https://docs.aws.amazon.com/cli/latest/reference/ec2/describe-instances.html
 
-    startJenkins
+    startEc2
 
-    status=$(statusJenkins)
+    status=$(statusEc2)
 
     while [ "x$status" != "xok" ]
     do
         echo -n "."
         sleep 1
-        status=$(statusJenkins)
+        status=$(statusEc2)
     done
 
-    JENKINS_IP=`aws ec2 describe-instances --region ${JENKINS_REGION}  --filters ${JENKINS_FILTERS} --query "Reservations[0].Instances[0].NetworkInterfaces[0].Association.PublicIp" | jq -r '.'`
+    EC2_IP=`aws ec2 describe-instances --region ${EC2_REGION}  --filters ${EC2_FILTERS} --query "Reservations[0].Instances[0].NetworkInterfaces[0].Association.PublicIp" | jq -r '.'`
 
-    echo "ssh -i ${AWS_KEY} centos@${JENKINS_IP}"
-    ssh-tmux -i ${AWS_KEY} centos@${JENKINS_IP}
+    echo "ssh -i ${AWS_KEY} centos@${EC2_IP}"
+    ssh-tmux -i ${AWS_KEY} centos@${EC2_IP}
 
     read -p "Shutdown instance? " answer
     if [ "x$answer" != "xn" ]
     then
         echo "Shutting down instance"
-        stopJenkins
+        stopEc2
     fi
 }
 ~   
