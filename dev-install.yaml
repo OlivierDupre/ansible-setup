@@ -116,6 +116,22 @@
       mv kustomize_*_${opsys}_amd64 /usr/bin/kustomize
       chmod 755 /usr/bin/kustomize
       exit 0
+  - name: Save logname (aka user) home as a variable
+    # https://stackoverflow.com/a/7359006
+    shell: > 
+      echo $(getent passwd $SUDO_USER | cut -d: -f6)
+    register: logname_home
+  - name: Download awsctx
+    git:
+      repo: 'https://github.com/OlivierDupre/awsctx.git'
+      dest: "{{ logname_home.stdout }}/.aws/.awsctx"
+      version: 0.1
+  - name: Install awsctx
+    shell: |
+      COMPDIR=$(pkg-config --variable=completionsdir bash-completion)
+      ln -sf {{ logname_home.stdout }}/.aws/.awsctx/completion/awsctx.bash $COMPDIR/awsctx
+      ln -sf {{ logname_home.stdout }}/.aws/.awsctx/.awsctx {{ logname_home.stdout }}/.rc/.awsctx
+      exit 0
   - name: Install Dive... to dive into Docker layers
     shell: |
       nb_definitions=`apt list dive 2> /dev/null | grep install | wc -l`
