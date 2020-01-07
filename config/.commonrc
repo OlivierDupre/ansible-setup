@@ -82,10 +82,23 @@ extract () {
 }
 
 function ssh-tmux() { 
-	ssh -t "$1" tmux a || ssh -t "$1" tmux; 
+	ssh $* -t tmux a || ssh $* -t tmux; 
 }
 
-function trim
-{
+# Strip leading white space (new line inclusive).
+ltrim(){
+    [[ "$1" =~ [^[:space:]].* ]]
+    printf "%s" "$BASH_REMATCH"
+}
+
+# Strip trailing white space (new line inclusive).
+rtrim(){
+    [[ "$1" =~ .*[^[:space:]] ]]
+    printf "%s" "$BASH_REMATCH"
+}
+
+# Strip leading and trailing white space (new line inclusive).
+trim(){
+    # printf "%s" "$(rtrim "$(ltrim "$1")")"
     echo "$1" | xargs
 }

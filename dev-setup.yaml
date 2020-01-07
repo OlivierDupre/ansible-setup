@@ -33,7 +33,7 @@
   - name: Create ssh-keygen if it does not already exist
     shell: |
       if [ ! -f ~/.ssh/id_rsa ]; then
-        ssh-keygen -t rsa -q -N ''
+        ssh-keygen -f id_rsa -t rsa -q   -N "''"
       fi
       exit 0
     args:
@@ -68,6 +68,8 @@
   #     repo: 'https://github.com/agkozak/polyglot-kube-ps1.git'
   #     dest: ~/prompt/polyglot-kube-ps1
 
-
   # https://www.pofilo.fr/post/20190727-terminator/
   # https://medium.com/@bhupathy/install-terminator-on-windows-with-wsl-2826591d2156
+
+  # - name: Add current user to VBox group to provide access to shared folders
+  #   shell: adduser $SUDO_USER vboxsf

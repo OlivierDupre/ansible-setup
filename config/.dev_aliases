@@ -1,0 +1,15 @@
+alias startEnv='gcloud compute instances start ${INSTANCE_NAME} --zone ${GCP_ZONE}  --project=${PROJECT_NAME}'
+alias descEnv='gcloud compute instances describe ${INSTANCE_NAME}  --zone ${GCP_ZONE} --project=${PROJECT_NAME}'
+alias stopEnv='gcloud compute instances stop ${INSTANCE_NAME} --zone ${GCP_ZONE} --project=${PROJECT_NAME}'
+
+function sshEnv() {
+    ping -c1 -W1 ${INSTANCE_IP}
+    if [ "$?" != "0" ]
+    then
+        echo "Starting env"
+        startEnv
+    fi
+
+    ssh-tmux -i ~/.ssh/id_rsa  olivier.dupre@${INSTANCE_IP}
+    stopEnv
+}
