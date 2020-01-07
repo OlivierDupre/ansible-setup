@@ -1,0 +1,1 @@
+/home/odupre/.awx/completion/awx.zsh
