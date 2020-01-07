@@ -84,3 +84,8 @@ extract () {
 function ssh-tmux() { 
 	ssh -t "$1" tmux a || ssh -t "$1" tmux; 
 }
+
+function trim
+{
+    echo "$1" | xargs
+}

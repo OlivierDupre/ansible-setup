@@ -14,7 +14,7 @@
   tasks:
   - name: Install base packages
     apt:
-      name: ['git','git-extras','wget','curl','tilix','vim','apt-transport-https','ca-certificates','software-properties-common','build-essential','libssl-dev','htop','tree','make','libc6-i386','lib32z1','libc6','python','python-pip','python3-pip','python-dev','libssl-dev','libcurl4-gnutls-dev','libexpat1-dev','unzip','python-lxml','g++','asciinema','gnupg-agent','snapd','apache2-utils','lsb-release','gnupg','gconf2','pkgconf']
+      name: ['git','git-extras','wget','curl','tilix','vim','apt-transport-https','ca-certificates','software-properties-common','build-essential','libssl-dev','htop','tree','make','libc6-i386','lib32z1','libc6','python','python-pip','python3-pip','python-dev','libssl-dev','libcurl4-gnutls-dev','libexpat1-dev','unzip','python-lxml','g++','asciinema','gnupg-agent','snapd','apache2-utils','lsb-release','gnupg','gconf2','pkgconf','ncdu','dbus-x11']
       update_cache: yes
       state: latest
   - name: Install eg
@@ -109,13 +109,14 @@
         ln -sf /opt/kubectx/completion/kubectx.bash $COMPDIR/kubectx
       fi
       exit 0
-  - name: Install kustomize
-    shell: |
-      opsys=linux 
-      curl -s https://api.github.com/repos/kubernetes-sigs/kustomize/releases/latest | grep browser_download | grep $opsys | cut -d '"' -f 4 | xargs curl -O -L
-      mv kustomize_*_${opsys}_amd64 /usr/bin/kustomize
-      chmod 755 /usr/bin/kustomize
-      exit 0
+  # Integrated by default in K8S 1.14+
+  # - name: Install kustomize
+  #   shell: |
+  #     opsys=linux 
+  #     curl -s https://api.github.com/repos/kubernetes-sigs/kustomize/releases/latest | grep browser_download | grep $opsys | cut -d '"' -f 4 | xargs curl -O -L
+  #     mv kustomize_*_${opsys}_amd64 /usr/bin/kustomize
+  #     chmod 755 /usr/bin/kustomize
+  #     exit 0
   - name: Install Dive... to dive into Docker layers
     shell: |
       nb_definitions=`apt list dive 2> /dev/null | grep install | wc -l`

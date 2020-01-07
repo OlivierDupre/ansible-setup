@@ -67,3 +67,7 @@
   #   git:
   #     repo: 'https://github.com/agkozak/polyglot-kube-ps1.git'
   #     dest: ~/prompt/polyglot-kube-ps1
+
+
+  # https://www.pofilo.fr/post/20190727-terminator/
+  # https://medium.com/@bhupathy/install-terminator-on-windows-with-wsl-2826591d2156
