@@ -38,23 +38,23 @@
       exit 0
     args:
       executable: /bin/bash
-  - name: Check if kube-ps1 is already downloaded
-    shell: echo `ls ~/.rc/prompts | grep kube-ps1`
-    register: kubeps1
-  - name: Download Kube-ps1 prompt
-    git:
-      repo: 'https://github.com/jonmosco/kube-ps1.git'
-      dest: ~/.rc/prompts/kube-ps1
-    when: kubeps1.stdout == ""
-  # Alternate prompts
-  - name: Check if bash-git-prompt is already downloaded
-    shell: echo `ls ~/.rc/prompts | grep bash-git-prompt`
-    register: bashgitprompt
-  - name: Download git prompt
-    git:
-      repo: 'https://github.com/OlivierDupre/bash-git-prompt.git'
-      dest: ~/.rc/prompts/bash-git-prompt
-    when: bashgitprompt.stdout == ""
+  # - name: Check if kube-ps1 is already downloaded
+  #   shell: echo `ls ~/.rc/prompts | grep kube-ps1`
+  #   register: kubeps1
+  # - name: Download Kube-ps1 prompt
+  #   git:
+  #     repo: 'https://github.com/jonmosco/kube-ps1.git'
+  #     dest: ~/.rc/prompts/kube-ps1
+  #   when: kubeps1.stdout == ""
+  # # Alternate prompts
+  # - name: Check if bash-git-prompt is already downloaded
+  #   shell: echo `ls ~/.rc/prompts | grep bash-git-prompt`
+  #   register: bashgitprompt
+  # - name: Download git prompt
+  #   git:
+  #     repo: 'https://github.com/OlivierDupre/bash-git-prompt.git'
+  #     dest: ~/.rc/prompts/bash-git-prompt
+  #   when: bashgitprompt.stdout == ""
   # - name: Define gitprompt options
   #   copy:
   #     src: prompt/gitprompt

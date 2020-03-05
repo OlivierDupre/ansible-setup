@@ -85,13 +85,14 @@
       exit 0
   - name: Install krew to facilitate kubectl plugin management
     shell: | 
-      (
-        set -x; cd "$(mktemp -d)" &&
-        curl -fsSLO "https://storage.googleapis.com/krew/v0.2.1/krew.{tar.gz,yaml}" &&
-        tar zxvf krew.tar.gz &&
-        ./krew-"$(uname | tr '[:upper:]' '[:lower:]')_amd64" install \
-          --manifest=krew.yaml --archive=krew.tar.gz
-      )
+    (
+      set -x; cd "$(mktemp -d)" &&
+      curl -fsSLO "https://github.com/kubernetes-sigs/krew/releases/latest/download/krew.{tar.gz,yaml}" &&
+      tar zxvf krew.tar.gz &&
+      KREW=./krew-"$(uname | tr '[:upper:]' '[:lower:]')_amd64" &&
+      "$KREW" install --manifest=krew.yaml --archive=krew.tar.gz &&
+      "$KREW" update
+    )
       nb_definitions=`grep KREW ~/.bashrc | wc -l`
       if [ $nb_definitions -eq 0 ]; then
         echo 'export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"'  >> ~/.bashrc
@@ -186,17 +187,17 @@
       nvm install node
       exit 0
   # The awscli package is available in repositories for other package managers such as apt and yum, but you're not assured of getting the latest version unless you get it from pip
-  - name: Install awscli
-    pip:
-      name: awscli
-      executable: pip3
-      extra_args: --upgrade
+  # - name: Install awscli
+  #   pip:
+  #     name: awscli
+  #     executable: pip3
+  #     extra_args: --upgrade
   # Configure with `aws configure` (Access key from console > IAM > User > Security credentials)
   # Check with `aws sts get-caller-identity`
-  - name: Add pip install dir to PATH
-    shell: | 
-      nb_definitions=`grep .local/bin ~/.bashrc | wc -l`
-      if [ $nb_definitions -eq 0 ]; then
-        echo 'export PATH="$HOME/.local/bin:$PATH"'  >> ~/.bashrc
-      fi
-      exit 0
+  # - name: Add pip install dir to PATH
+  #   shell: | 
+  #     nb_definitions=`grep .local/bin ~/.bashrc | wc -l`
+  #     if [ $nb_definitions -eq 0 ]; then
+  #       echo 'export PATH="$HOME/.local/bin:$PATH"'  >> ~/.bashrc
+  #     fi
+  #     exit 0
