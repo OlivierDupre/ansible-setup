@@ -1,6 +1,7 @@
 ; Must be located in the startup folder.
 ; To find the startup folder running
 ; Win+R -> shell:startup
+; C:\Users\xXxXx\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup
 
 #NoEnv  ; Recommended for performance and compatibility with future AutoHotkey releases.
 ; #Warn  ; Enable warnings to assist with detecting common errors.
@@ -10,10 +11,10 @@ SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
 
 ; Run Ubuntu directly with F9, starting bash
 ^F9::
-Process, Exist, ubuntu1804.exe
+Process, Exist, ubuntu2004.exe
 If !ErrorLevel ; is not running
 {
-    Run, ubuntu1804.exe
+    Run, ubuntu2004.exe
     return
 }
 pid := ErrorLevel
@@ -32,7 +33,7 @@ F9::
 Process, Exist, vcxsrv.exe
 If !ErrorLevel ; is not running
 {
-    Run, D:\workspace\tech\ansible-setup\wsl-terminator.vbs
+    Run, C:\Users\odupre\workspace\tech\ansible-setup\wsl-terminator.vbs
     return
 }
 pid := ErrorLevel
