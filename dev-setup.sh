@@ -1,6 +1,6 @@
 #!/bin/bash
 # Base
-sudo apt install git git-extras curl vim apt-transport-https ca-certificates software-properties-common build-essential libssl-dev htop tree make libc6-i386 lib32z1 libnss3 libc6  python3 python3-venv  python3-pip  libssl-dev libcurl4-gnutls-dev libexpat1-dev unzip  g++ asciinema gnupg-agent snapd apache2-utils lsb-release gnupg gconf2 pkgconf libnotify4 libxss1 libappindicator1 ncdu dbus-x11 zsh zip
+sudo apt install git git-extras curl vim apt-transport-https ca-certificates software-properties-common build-essential libssl-dev htop tree make libc6-i386 lib32z1 libnss3 libc6  python3 python3-venv  python3-pip  libssl-dev libcurl4-gnutls-dev libexpat1-dev unzip  g++ asciinema gnupg-agent snapd apache2-utils lsb-release gnupg gconf2 pkgconf libnotify4 libxss1 libappindicator1 ncdu dbus-x11 zsh zip  
 
 # SSH
 ssh-keygen  -t rsa -b 4096 -C 'dupreolivier@gmail.com'
@@ -20,6 +20,7 @@ cp ~/.zshrc ~/.zshrc.$(date +%Y-%m-%d)
 git clone --depth=1 https://github.com/romkatv/powerlevel10k.git $ZSH_CUSTOM/themes/powerlevel10k
 nb_definitions=`grep -R powerlevel10k ~/.zshrc | wc -l`
 if [ $nb_definitions -eq 0 ]; then
+    sed -i 's/ZSH_THEME/\#ZSH_THEME/g'  ~/.zshrc
     echo 'ZSH_THEME="powerlevel10k/powerlevel10k"' >> ~/.zshrc
 fi
 #p10k configure
@@ -32,26 +33,27 @@ eval $(/home/linuxbrew/.linuxbrew/bin/brew shellenv)
 brew install gcc helm
 
 # GCP
-sudo su -
-. /etc/os-release
-export CLOUD_SDK_REPO="cloud-sdk-$UBUNTU_CODENAME"
-nb_definitions=`grep -R cloud-sdk /etc/apt/sources.list.d | wc -l`
-if [ $nb_definitions -eq 0 ]; then
-    echo "deb http://packages.cloud.google.com/apt $CLOUD_SDK_REPO main" | tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
-fi
-curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add - 
-
-# GCloud
 echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | sudo tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
 curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key --keyring /usr/share/keyrings/cloud.google.gpg add -
-sudo apt update -y && sudo apt -y install google-cloud-sdk google-cloud-sdk-app-engine-java google-cloud-sdk-app-engine-go google-cloud-sdk-bigtable-emulator kubectl
+sudo apt-get update && sudo apt-get install google-cloud-sdk kubectl
+# sudo apt -y install  google-cloud-sdk-app-engine-java google-cloud-sdk-app-engine-go google-cloud-sdk-bigtable-emulator 
 
 # Azure
-curl -sL https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor | sudo  tee /etc/apt/trusted.gpg.d/microsoft.asc.gpg > /dev/null
-nb_definitions=`grep -R azure-cli /etc/apt/sources.list.d | wc -l`
-if [ $nb_definitions -eq 0 ]; then
-    echo "deb [arch=amd64] https://packages.microsoft.com/repos/azure-cli/ $UBUNTU_CODENAME main" | tee /etc/apt/sources.list.d/azure-cli.list
-fi
+curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+##### OR #####
+curl -sL https://packages.microsoft.com/keys/microsoft.asc |
+    gpg --dearmor |
+    sudo tee /etc/apt/trusted.gpg.d/microsoft.asc.gpg > /dev/null
+# AZ_REPO=$(lsb_release -cs)
+AZ_REPO=eoan
+echo "deb [arch=amd64] https://packages.microsoft.com/repos/azure-cli/ $AZ_REPO main" |
+    sudo tee /etc/apt/sources.list.d/azure-cli.list
+
+# curl -sL https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor | sudo  tee /etc/apt/trusted.gpg.d/microsoft.asc.gpg > /dev/null
+# nb_definitions=`grep -R azure-cli /etc/apt/sources.list.d | wc -l`
+# if [ $nb_definitions -eq 0 ]; then
+#     echo "deb [arch=amd64] https://packages.microsoft.com/repos/azure-cli/ $UBUNTU_CODENAME main" | tee /etc/apt/sources.list.d/azure-cli.list
+# fi
 
 # AWS
 curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
@@ -64,10 +66,10 @@ rm -Rf aws
 # kubeval
 if [ ! \( -e /usr/local/bin/kubeval \) ]; then 
     PLATFORM=linux
-    wget https://github.com/garethr/kubeval/releases/download/0.14.0/kubeval-${PLATFORM}-amd64.tar.gz;
-    tar xf kubeval-${PLATFORM}-amd64.tar.gz;
-    mv kubeval /usr/local/bin;
-    rm kubeval-${PLATFORM}-amd64.tar.gz;
+    mkdir ~/kubeval
+    curl -SL https://github.com/garethr/kubeval/releases/download/0.15.0/kubeval-$PLATFORM-amd64.tar.gz  | tar -xz -C ~/kubeval
+    sudo mv ~/kubeval/kubeval /usr/local/bin
+    rm -Rf ~/kubeval
 fi
 
 # krew
@@ -82,7 +84,7 @@ fi
 )
 nb_definitions=`grep -R krew ~/.zshrc | wc -l`
 if [ $nb_definitions -eq 0 ]; then
-    echo "export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"" >> ~/.zshrc
+    echo "export PATH="${KREW_ROOT:-$HOME/.krew}/bin:\$PATH"" >> ~/.zshrc
 fi
 
 # kubectx & kubens
@@ -99,11 +101,10 @@ fi
 exit
 
 # dive
-sudo su -
 nb_definitions=`apt list dive 2> /dev/null | grep install | wc -l`
-    if [ $nb_definitions -eq 0 ]; then
-    wget https://github.com/wagoodman/dive/releases/download/v0.9.2/dive_0.9.2_linux_amd64.deb;
-    apt install ./dive_0.9.2_linux_amd64.deb;
+if [ $nb_definitions -eq 0 ]; then
+    curl -SL https://github.com/wagoodman/dive/releases/download/v0.9.2/dive_0.9.2_linux_amd64.deb -o dive_0.9.2_linux_amd64.deb
+    dpkg -i ./dive_0.9.2_linux_amd64.deb;
     rm ./dive_0.9.2_linux_amd64.deb
 fi
 exit
