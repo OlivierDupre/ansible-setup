@@ -1,17 +1,15 @@
+#!/bin/zsh
+
 export VISUAL=vim
 export EDITOR="$VISUAL"
 
 # Upgrades the distribution (soft and kernel, not Ubuntu itself) then removes and cleans unecessary packages.
-alias distUpgrade='sudo apt-get update && sudo apt-get full-upgrade && sudo apt-get autoclean && sudo apt-get autoremove'
+alias distUpgrade='sudo apt update && sudo apt full-upgrade && sudo apt autoclean && sudo apt autoremove'
 alias vi="vim"
 alias diff="colordiff"
 alias mkdir="mkdir -p"
 
 alias ls="ls --color=always"
-alias ld='ls -Gl | grep ^d' #Only list directories
-alias lad='ls -Gal | grep ^d' #Only list directories, including hidden ones
-alias l.='ls -d .* --color=auto'
-alias lr='ls -R | grep ":$" | sed -e '\''s/:$//'\'' -e '\''s/[^-][^\/]*\//--/g'\'' -e '\''s/^/   /'\'' -e '\''s/-/|/'\'''
 alias ll="ls -alhF"
 
 alias ds="du . -d 1 -ah|sort -rh"
