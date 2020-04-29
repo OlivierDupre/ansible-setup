@@ -118,3 +118,8 @@ sdk install java && sdk install kotlin && sdk install maven && sdk install gradl
 curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.34.0/install.sh | bash
 exec zsh
 nvm install node
+
+# eg
+sudo ln -s /usr/bin/python3 /usr/bin/python
+sudo git clone https://github.com/srsudar/eg /opt/eg;
+sudo ln -s /opt/eg/eg_exec.py /usr/local/bin/eg;
