@@ -21,7 +21,6 @@ alias apb='ansible-playbook --ask-become-pass'
 
 alias openports='sudo netstat -vtlnp --listening -4'
 alias ps-mem='ps -o time,ppid,pid,nice,pcpu,pmem,user,comm -A | sort -n -k 6 | tail -15'
-alias myip='curl ip.appspot.com'
 alias open='xdg-open'
 alias woman='eg'
 
@@ -83,4 +82,15 @@ rtrim(){
 trim(){
     # printf "%s" "$(rtrim "$(ltrim "$1")")"
     echo "$1" | xargs
+}
+
+myip(){
+    echo $(curl -sSL ifconfig.me/ip)
+}
+
+myipv6(){
+    IPv4=$(curl -sSL ifconfig.me/ip)
+    echo "IPv4 $IPv4"
+
+    curl -sSL ifconfig.co/json | jq
 }
