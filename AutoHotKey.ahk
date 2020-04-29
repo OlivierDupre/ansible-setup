@@ -1,6 +1,7 @@
 ; Must be located in the startup folder.
 ; To find the startup folder running
 ; Win+R -> shell:startup
+; C:\Users\xXxXx\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup
 
 #NoEnv  ; Recommended for performance and compatibility with future AutoHotkey releases.
 ; #Warn  ; Enable warnings to assist with detecting common errors.
