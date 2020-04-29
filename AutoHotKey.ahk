@@ -10,10 +10,10 @@ SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
 
 ; Run Ubuntu directly with F9, starting bash
 ^F9::
-Process, Exist, ubuntu1804.exe
+Process, Exist, ubuntu2004.exe
 If !ErrorLevel ; is not running
 {
-    Run, ubuntu1804.exe
+    Run, ubuntu2004.exe
     return
 }
 pid := ErrorLevel
@@ -32,7 +32,7 @@ F9::
 Process, Exist, vcxsrv.exe
 If !ErrorLevel ; is not running
 {
-    Run, D:\workspace\tech\ansible-setup\wsl-terminator.vbs
+    Run, C:\Users\odupre\workspace\tech\ansible-setup\wsl-terminator.vbs
     return
 }
 pid := ErrorLevel
