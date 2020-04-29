@@ -15,9 +15,9 @@ nb_definitions=`grep -R cloud-sdk /etc/apt/sources.list.d | wc -l`
 if [ $nb_definitions -eq 0 ]; then
     echo "deb http://packages.cloud.google.com/apt $CLOUD_SDK_REPO main" | tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
 fi
-curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add - 
+curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add - 
 # Azure
-curl -sL https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor | tee /etc/apt/trusted.gpg.d/microsoft.asc.gpg > /dev/null
+curl -sL https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor | sudo  tee /etc/apt/trusted.gpg.d/microsoft.asc.gpg > /dev/null
 nb_definitions=`grep -R azure-cli /etc/apt/sources.list.d | wc -l`
 if [ $nb_definitions -eq 0 ]; then
     echo "deb [arch=amd64] https://packages.microsoft.com/repos/azure-cli/ $UBUNTU_CODENAME main" | tee /etc/apt/sources.list.d/azure-cli.list
