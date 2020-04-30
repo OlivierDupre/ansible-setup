@@ -121,6 +121,14 @@ curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.34.0/install.sh | b
 exec zsh
 nvm install node
 
+# Go
+GO_VERSION=1.14.2.linux-amd64
+sudo curl -SL https://dl.google.com/go/go$GO_VERSION.tar.gz | sudo tar -C /usr/local -xzf
+nb_definitions=`grep -R /usr/local/go ~/.zshrc | wc -l`
+if [ $nb_definitions -eq 0 ]; then
+    echo 'export PATH=$PATH:/usr/local/go/bin' >> ~/.zshrc
+fi
+
 # eg
 sudo ln -s /usr/bin/python3 /usr/bin/python
 sudo git clone https://github.com/srsudar/eg /opt/eg;
