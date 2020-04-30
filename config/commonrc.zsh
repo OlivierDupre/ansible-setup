@@ -9,8 +9,8 @@ alias vi="vim"
 alias diff="colordiff"
 alias mkdir="mkdir -p"
 
-alias ls="ls --color=always"
-alias ll="ls -alhF"
+alias ls='colorls --sd -A'
+alias ll="colorls -lA --sd"
 
 alias ds="du . -d 1 -ah|sort -rh"
 alias ducks='du -chs *|sort -rn|head -11'
