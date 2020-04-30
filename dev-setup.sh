@@ -37,6 +37,21 @@ echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.clou
 curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key --keyring /usr/share/keyrings/cloud.google.gpg add -
 sudo apt-get update && sudo apt-get install google-cloud-sdk kubectl
 # sudo apt -y install  google-cloud-sdk-app-engine-java google-cloud-sdk-app-engine-go google-cloud-sdk-bigtable-emulator 
+COMPDIR='~/.oh-my-zsh/completions'
+mkdir -p $COMPDIR
+kubectl completion zsh > $COMPDIR/_kubectl
+# kubectx & kubens --> Manual download beta version from https://github.com/ahmetb/kubectx/releases/tag/v0.9.0
+# sudo su -
+# if [ ! \( -e /usr/local/bin/kubectx \) || ! \( -e /usr/local/bin/kubectx \) ]; then 
+#     git clone https://github.com/ahmetb/kubectx /opt/kubectx;
+#     ln -s /opt/kubectx/kubectx /usr/local/bin/kubectx;
+#     ln -s /opt/kubectx/kubens /usr/local/bin/kubens;
+
+    
+#     ln -sf /opt/kubectx/completion/kubens.bash $COMPDIR/_kubens
+#     ln -sf /opt/kubectx/completion/kubectx.bash $COMPDIR/_kubectx
+# fi
+# exit
 
 # Azure
 curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
@@ -86,19 +101,6 @@ nb_definitions=`grep -R krew ~/.zshrc | wc -l`
 if [ $nb_definitions -eq 0 ]; then
     echo "export PATH="${KREW_ROOT:-$HOME/.krew}/bin:\$PATH"" >> ~/.zshrc
 fi
-
-# kubectx & kubens
-sudo su -
-if [ ! \( -e /usr/local/bin/kubectx \) || ! \( -e /usr/local/bin/kubectx \) ]; then 
-    git clone https://github.com/ahmetb/kubectx /opt/kubectx;
-    ln -s /opt/kubectx/kubectx /usr/local/bin/kubectx;
-    ln -s /opt/kubectx/kubens /usr/local/bin/kubens;
-
-    COMPDIR=$(pkg-config --variable=completionsdir bash-completion)
-    ln -sf /opt/kubectx/completion/kubens.bash $COMPDIR/kubens
-    ln -sf /opt/kubectx/completion/kubectx.bash $COMPDIR/kubectx
-fi
-exit
 
 # dive
 nb_definitions=`apt list dive 2> /dev/null | grep install | wc -l`

@@ -9,7 +9,10 @@ alias kir='kubectl --insecure-skip-tls-verify=true --field-selector "status.phas
 alias kctx='kubectx'
 alias kns='kubens'
 
-if [ $commands[kubectl] ]; then source <(kubectl completion zsh); fi
+#if [ $commands[kubectl] ]; then source <(kubectl completion zsh); complete -F __start_kubectl k; fi
+# Completion files must be accessible in $fpath: https://github.com/zsh-users/zsh-completions/blob/master/zsh-completions-howto.org
+# Look at ~/.oh-my-zsh/completions
+complete -F __start_kubectl k
 
 export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
 
