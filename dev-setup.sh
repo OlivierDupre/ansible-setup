@@ -14,14 +14,13 @@ git clone --depth 1 git@github.com:ryanoasis/nerd-fonts.git
 nerd-fonts/install.sh
 
 # zsh
-sudo chsh -s $(which zsh)
+chsh -s $(which zsh)
 sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 cp ~/.zshrc ~/.zshrc.$(date +%Y-%m-%d)
 git clone --depth=1 https://github.com/romkatv/powerlevel10k.git $ZSH_CUSTOM/themes/powerlevel10k
 nb_definitions=`grep -R powerlevel10k ~/.zshrc | wc -l`
 if [ $nb_definitions -eq 0 ]; then
-    sed -i 's/ZSH_THEME/\#ZSH_THEME/g'  ~/.zshrc
-    echo 'ZSH_THEME="powerlevel10k/powerlevel10k"' >> ~/.zshrc
+    sed -i 's/ZSH_THEME=.*/ZSH_THEME="powerlevel10k/powerlevel10k"/g'  ~/.zshrc
 fi
 #p10k configure
 exec zsh
@@ -114,7 +113,7 @@ exit
 # SDKMan
 curl -s "https://get.sdkman.io" | bash
 exec zsh
-sdk install java && sdk install kotlin && sdk install maven && sdk install gradle && sdk install springboot
+sdk install java ; sdk install kotlin ; sdk install maven ; sdk install gradle ; sdk install springboot
 
 # NVM
 curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.34.0/install.sh | bash
