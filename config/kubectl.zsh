@@ -2,6 +2,11 @@
 
 alias docker='docker.exe'
 alias docker-compose='docker-compose.exe'
+# Get container IP by name or ID
+alias dip="docker inspect --format='{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}'"
+# List all container IPs
+alias dipall="docker inspect --format='{{.Name}} {{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $(docker ps -q)"
+
 alias kubectl='kubectl.exe'
 alias k='kubectl'
 alias ki='kubectl --insecure-skip-tls-verify=true'
