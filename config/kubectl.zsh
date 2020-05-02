@@ -19,7 +19,9 @@ alias kns='kubens'
 # Look at ~/.oh-my-zsh/completions
 complete -F __start_kubectl k
 
-export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
+# Add krew to the path if krew is installed and not already in the path
+flag=`echo $PATH|awk '{print match($0,"krew")}'`;
+[ -d "$HOME/.krew/bin" ] && if [ $flag -gt 0 ]; then export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"; fi
 
 function kdash(){
     kubectl -n kube-system describe secret $(kubectl -n kube-system get secret | grep admin-user | awk '{print $1}')
