@@ -76,6 +76,8 @@ unzip awscliv2.zip
 rm awscliv2.zip
 ./aws/install
 rm -Rf aws
+## Serverless
+curl -o- -L https://slss.io/install | bash
 
 # Misc
 # kubeval
