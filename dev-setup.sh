@@ -2,6 +2,13 @@
 # Base
 sudo apt install git git-extras curl vim apt-transport-https ca-certificates software-properties-common build-essential libssl-dev htop tree make libc6-i386 lib32z1 libnss3 libc6  python3 python3-venv  python3-pip  libssl-dev libcurl4-gnutls-dev libexpat1-dev unzip  g++ asciinema gnupg-agent snapd apache2-utils lsb-release gnupg gconf2 pkgconf libnotify4 libxss1 libappindicator1 ncdu dbus-x11 zsh zip jq ruby-dev
 
+# FIX the lib6c issue on Ubuntu 20.04 on WSL1
+# https://www.how2shout.com/how-to/how-to-upgrade-ubuntu-18-04-lts-to-20-04-lts-on-wsl-windows-10.html
+wget https://launchpad.net/~rafaeldtinoco/+archive/ubuntu/lp1871129/+files/libc6_2.31-0ubuntu8+lp1871129~1_amd64.deb
+sudo dpkg --install libc6_2.31-0ubuntu8+lp1871129~1_amd64.deb
+sudo apt-mark hold libc6
+sudo apt --fix-broken install
+
 # SSH
 ssh-keygen  -t rsa -b 4096 -C 'dupreolivier@gmail.com'
 eval "$(ssh-agent -s)"
@@ -20,13 +27,19 @@ cp ~/.zshrc ~/.zshrc.$(date +%Y-%m-%d)
 git clone --depth=1 https://github.com/romkatv/powerlevel10k.git $ZSH_CUSTOM/themes/powerlevel10k
 nb_definitions=`grep -R powerlevel10k ~/.zshrc | wc -l`
 if [ $nb_definitions -eq 0 ]; then
-    sed -i 's/ZSH_THEME=.*/ZSH_THEME="powerlevel10k/powerlevel10k"/g'  ~/.zshrc
+    sed -i 's/ZSH_THEME=.*/ZSH_THEME="powerlevel10k\/powerlevel10k"/'  ~/.zshrc
 fi
 #p10k configure
 exec zsh
 
 # Brew
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
+# Automate launching the installation echo a "Return" expected by the install script
+# /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
+curl  -fsSLO https://raw.githubusercontent.com/Homebrew/install/master/install.sh
+chmod +x ./install.sh
+echo | ./install.sh
+echo '\n'
+rm ./install.sh
 echo 'eval $(/home/linuxbrew/.linuxbrew/bin/brew shellenv)' >> /home/$USER/.zshrc
 eval $(/home/linuxbrew/.linuxbrew/bin/brew shellenv)
 brew install gcc helm
@@ -34,7 +47,7 @@ brew install gcc helm
 # GCP
 echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | sudo tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
 curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key --keyring /usr/share/keyrings/cloud.google.gpg add -
-sudo apt-get update && sudo apt-get install google-cloud-sdk kubectl
+sudo apt-get update && sudo apt-get install -y google-cloud-sdk kubectl
 # sudo apt -y install  google-cloud-sdk-app-engine-java google-cloud-sdk-app-engine-go google-cloud-sdk-bigtable-emulator 
 COMPDIR='~/.oh-my-zsh/completions'
 mkdir -p $COMPDIR
@@ -76,7 +89,7 @@ rm awscliv2.zip
 ./aws/install
 rm -Rf aws
 ## Serverless
-curl -o- -L https://slss.io/install | bash
+curl -o- -L https://slss.io/install | zsh
 
 # Misc
 # kubeval
@@ -92,7 +105,7 @@ fi
 # https://krew.sigs.k8s.io/docs/user-guide/setup/install/
 (
   set -x; cd "$(mktemp -d)" &&
-  curl -fsSLO "https://github.com/kubernetes-sigs/krew/releases/latest/download/krew.{tar.gz,yaml}" &&
+  echo | curl -fsSLO "https://github.com/kubernetes-sigs/krew/releases/latest/download/krew.{tar.gz,yaml}" &&
   tar zxvf krew.tar.gz &&
   KREW=./krew-"$(uname | tr '[:upper:]' '[:lower:]')_amd64" &&
   "$KREW" install --manifest=krew.yaml --archive=krew.tar.gz &&
@@ -106,29 +119,26 @@ fi
 # dive
 nb_definitions=`apt list dive 2> /dev/null | grep install | wc -l`
 if [ $nb_definitions -eq 0 ]; then
-    curl -SL https://github.com/wagoodman/dive/releases/download/v0.9.2/dive_0.9.2_linux_amd64.deb -o dive_0.9.2_linux_amd64.deb
-    dpkg -i ./dive_0.9.2_linux_amd64.deb;
+    curl -SLO https://github.com/wagoodman/dive/releases/download/v0.9.2/dive_0.9.2_linux_amd64.deb
+    sudo dpkg -i ./dive_0.9.2_linux_amd64.deb;
     rm ./dive_0.9.2_linux_amd64.deb
 fi
-exit
 
 # SDKMan
-curl -s "https://get.sdkman.io" | bash
-exec zsh
+curl -s "https://get.sdkman.io" | zsh
+source ~/.zshrc
 sdk install java ; sdk install kotlin ; sdk install maven ; sdk install gradle ; sdk install springboot
 
 # NVM
-curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.34.0/install.sh | bash
-exec zsh
+curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.34.0/install.sh | zsh
+source ~/.zshrc
 nvm install node
 
 # Go
 GO_VERSION=1.14.2.linux-amd64
-sudo curl -SL https://dl.google.com/go/go$GO_VERSION.tar.gz | sudo tar -C /usr/local -xzf
+sudo curl -SL https://dl.google.com/go/go$GO_VERSION.tar.gz | sudo tar -C /usr/local -xzf -
 nb_definitions=`grep -R /usr/local/go ~/.zshrc | wc -l`
-if [ $nb_definitions -eq 0 ]; then
-    echo 'export PATH=$PATH:/usr/local/go/bin' >> ~/.zshrc
-fi
+[ $nb_definitions -eq 0 ] && echo 'export PATH=$PATH:/usr/local/go/bin' >> ~/.zshrc
 
 # eg
 sudo ln -s /usr/bin/python3 /usr/bin/python
