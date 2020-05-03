@@ -115,12 +115,20 @@ function sshEc2() {
     echo "ssh -i ${AWS_KEY} ubuntu@${ec2_ip}"
     ssh -i ${AWS_KEY} ubuntu@${ec2_ip}
 
-    read -q "ANSWER?Shutdown instance? " 
+    RED="\033[1;31m"
+    GREEN="\033[1;32m"
+    NOCOLOR="\033[0m"
+    echo -e $RED
+
+    read -q "ANSWER?\n==> WARNING: Are you sure you want to shutdown instance ${ec2_instance}? " 
     if [ "x$ANSWER" = "xy" ]
     then
+        echo -e $GREEN
         echo "\n --> Shutting down instance <--"
+        echo -e $NOCOLOR
         stopEc2
     fi
+    echo -e $NOCOLOR
 
     return 0
 }
