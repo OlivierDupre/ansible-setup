@@ -81,12 +81,15 @@ echo "deb [arch=amd64] https://packages.microsoft.com/repos/azure-cli/ $AZ_REPO 
 # if [ $nb_definitions -eq 0 ]; then
 #     echo "deb [arch=amd64] https://packages.microsoft.com/repos/azure-cli/ $UBUNTU_CODENAME main" | tee /etc/apt/sources.list.d/azure-cli.list
 # fi
+sudo apt install azure-cli
 
 # AWS
 curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
 unzip awscliv2.zip
 rm awscliv2.zip
-./aws/install
+# sudo mkdir -p /usr/local/aws-cli
+# sudo chown $USER /usr/local/aws-cli
+sudo ./aws/install
 rm -Rf aws
 ## Serverless
 curl -o- -L https://slss.io/install | zsh

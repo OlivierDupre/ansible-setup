@@ -103,6 +103,7 @@ source $ZSH/oh-my-zsh.sh
 
 [ -s "/home/linuxbrew/.linuxbrew/bin/brew" ] && eval $(/home/linuxbrew/.linuxbrew/bin/brew shellenv)
 
+[ -d "$HOME/.serverless/bin" ] && export PATH="$HOME/.serverless/bin:$PATH"
 [ -d "$HOME/.krew/bin" ] && export PATH=$HOME/.krew/bin:$PATH
 [ -d "/usr/local/go/bin" ] && export PATH=$PATH:/usr/local/go/bin
 
