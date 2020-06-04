@@ -1,13 +1,12 @@
 #!/bin/zsh
 
-alias docker='docker.exe'
-alias docker-compose='docker-compose.exe'
+export DOCKER_HOST=tcp://localhost:2375
+
 # Get container IP by name or ID
 alias dip="docker inspect --format='{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}'"
 # List all container IPs
 alias dipall="docker inspect --format='{{.Name}} {{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $(docker ps -q)"
 
-alias kubectl='kubectl.exe'
 alias k='kubectl'
 alias ki='kubectl --insecure-skip-tls-verify=true'
 alias kir='kubectl --insecure-skip-tls-verify=true --field-selector "status.phase==Running"'
@@ -24,7 +23,10 @@ flag=`echo $PATH|awk '{print match($0,"krew")}'`;
 [ -d "$HOME/.krew/bin" ] && if [ $flag -gt 0 ]; then export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"; fi
 
 function kdash(){
-    kubectl -n kube-system describe secret $(kubectl -n kube-system get secret | grep admin-user | awk '{print $1}')
-    echo -e "\n\thttp://localhost:8001/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/\n"
+    # kubectl -n kube-system describe secret $(kubectl -n kube-system get secret | grep admin-user | awk '{print $1}')
+    # echo -e "\n\thttp://localhost:8001/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/\n"
+    # kubectl proxy
+    kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.0.0-beta8/aio/deploy/recommended.yaml
     kubectl proxy
+    open http://localhost:8001/api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/
 }

@@ -104,6 +104,17 @@ if [ ! \( -e /usr/local/bin/kubeval \) ]; then
     rm -Rf ~/kubeval
 fi
 
+# Docker
+# https://docs.docker.com/engine/install/ubuntu/
+# https://nickjanetakis.com/blog/setting-up-docker-for-windows-and-wsl-to-work-flawlessly
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+sudo apt-get update
+sudo apt-get -y install docker-ce docker-ce-cli containerd.io
+sudo systemctl disable docker
+sudo usermod -aG docker $USER
+# CONFIGURE MANUALLY Docker for Windows, in its options, to expose daemon on TCP without TLS
+
 # krew
 # https://krew.sigs.k8s.io/docs/user-guide/setup/install/
 (
