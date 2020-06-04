@@ -166,7 +166,7 @@
       # Then... `gcloud container clusters get-credentials $CLUSTER_NAME --zone $ZONE --project $PROJECT_NAME`
       exit 0
   - name: Install SDKMan
-    shell: curl -s "https://get.sdkman.io" | bash
+    shell: [ ! -d {{ ansible_env.HOME }}/.sdkman/bin/ ] && curl -s "https://get.sdkman.io" | bash
     args:
       warn: false
   - name: Install Java, Kotlin, Maven, Gradle, Springboot...
