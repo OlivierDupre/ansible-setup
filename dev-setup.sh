@@ -114,6 +114,7 @@ exit
 curl -s "https://get.sdkman.io" | bash
 exec zsh
 sdk install java ; sdk install kotlin ; sdk install maven ; sdk install gradle ; sdk install springboot
+sdk flush version
 
 # NVM
 curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.34.0/install.sh | bash
