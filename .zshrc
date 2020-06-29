@@ -17,7 +17,7 @@ ZSH_THEME="powerlevel10k/powerlevel10k"
 # ZSH_THEME_RANDOM_CANDIDATES=( "robbyrussell" "agnoster" )
 
 # Uncomment the following line to use case-sensitive completion.
-# CASE_SENSITIVE="true"
+CASE_SENSITIVE="true"
 
 # Uncomment the following line to use hyphen-insensitive completion.
 # Case-sensitive completion must be off. _ and - will be interchangeable.
@@ -103,6 +103,7 @@ source $ZSH/oh-my-zsh.sh
 
 [ -s "/home/linuxbrew/.linuxbrew/bin/brew" ] && eval $(/home/linuxbrew/.linuxbrew/bin/brew shellenv)
 
+[ -d "$HOME/.serverless/bin" ] && export PATH="$HOME/.serverless/bin:$PATH"
 [ -d "$HOME/.krew/bin" ] && export PATH=$HOME/.krew/bin:$PATH
 [ -d "/usr/local/go/bin" ] && export PATH=$PATH:/usr/local/go/bin
 
