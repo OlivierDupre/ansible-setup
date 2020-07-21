@@ -1,6 +1,9 @@
 #!/bin/bash
 # Base
-sudo apt install git git-extras curl vim apt-transport-https ca-certificates software-properties-common build-essential libssl-dev htop tree make libc6-i386 lib32z1 libnss3 libc6  python3 python3-venv  python3-pip  libssl-dev libcurl4-gnutls-dev libexpat1-dev unzip  g++ asciinema gnupg-agent snapd apache2-utils lsb-release gnupg gconf2 pkgconf libnotify4 libxss1 libappindicator1 ncdu dbus-x11 zsh zip jq ruby-dev dos2unix
+sudo apt install git git-extras curl vim apt-transport-https ca-certificates software-properties-common build-essential libssl-dev htop tree make libc6-i386 lib32z1 libnss3 libc6  python3 python3-venv  python3-pip  libssl-dev libcurl4-gnutls-dev libexpat1-dev unzip  g++ asciinema gnupg-agent snapd apache2-utils lsb-release gnupg gconf2 pkgconf libnotify4 libxss1 libappindicator1 ncdu dbus-x11 zsh zip jq ruby-dev dos2unix lolcat figlet toilet cowsay
+
+# Download https://github.com/xero/figlet-fonts
+# Apply https://blog.victormendonca.com/2019/03/10/colorful-banners-with-figlet-and-lolcat/
 
 # FIX the lib6c issue on Ubuntu 20.04 on WSL1
 # https://www.how2shout.com/how-to/how-to-upgrade-ubuntu-18-04-lts-to-20-04-lts-on-wsl-windows-10.html
