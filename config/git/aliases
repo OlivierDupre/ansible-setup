@@ -4,6 +4,7 @@
 [credential]
 	helper = cache --timeout=3600
 [core]
+	autocrlf = true
 	excludesfile = ~/.gitignore_global
 	editor = vim
 	fileMode = false

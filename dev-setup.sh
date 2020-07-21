@@ -1,7 +1,6 @@
 #!/bin/bash
 # Base
-sudo apt install git git-extras curl vim apt-transport-https ca-certificates software-properties-common build-essential libssl-dev htop tree make libc6-i386 lib32z1 libnss3 libc6  python3 python3-venv  python3-pip  libssl-dev libcurl4-gnutls-dev libexpat1-dev unzip  g++ asciinema gnupg-agent snapd apache2-utils lsb-release gnupg gconf2 pkgconf libnotify4 libxss1 libappindicator1 ncdu dbus-x11 zsh zip jq ruby-dev dos2unix lolcat figlet toilet cowsay
-
+sudo apt install git git-extras curl vim apt-transport-https ca-certificates software-properties-common build-essential libssl-dev htop tree make libc6-i386 lib32z1 libnss3 libc6  python3 python3-venv  python3-pip  libssl-dev libcurl4-gnutls-dev libexpat1-dev unzip  g++ asciinema gnupg-agent apache2-utils lsb-release gnupg gconf2 pkgconf libnotify4 libxss1 libappindicator1 ncdu dbus-x11 zsh zip jq ruby-dev dos2unix lolcat figlet toilet cowsay tilix
 # Download https://github.com/xero/figlet-fonts
 # Apply https://blog.victormendonca.com/2019/03/10/colorful-banners-with-figlet-and-lolcat/
 
@@ -32,7 +31,11 @@ nb_definitions=`grep -R powerlevel10k ~/.zshrc | wc -l`
 if [ $nb_definitions -eq 0 ]; then
     sed -i 's/ZSH_THEME=.*/ZSH_THEME="powerlevel10k\/powerlevel10k"/'  ~/.zshrc
 fi
-#p10k configure
+#p10k configuregit clone --depth=1 https://github.com/romkatv/powerlevel10k.git $ZSH_CUSTOM/themes/powerlevel10k
+nb_definitions=`grep -R powerlevel10k ~/.zshrc | wc -l`
+if [ $nb_definitions -eq 0 ]; then
+    sed -i 's/ZSH_THEME=.*/ZSH_THEME="powerlevel10k\/powerlevel10k"/'  ~/.zshrc
+fi
 exec zsh
 
 # Brew
@@ -50,7 +53,7 @@ brew install gcc helm
 # GCP
 echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | sudo tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
 curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key --keyring /usr/share/keyrings/cloud.google.gpg add -
-sudo apt-get update && sudo apt-get install -y google-cloud-sdk kubectl
+sudo apt update && sudo apt install -y google-cloud-sdk kubectl
 # sudo apt -y install  google-cloud-sdk-app-engine-java google-cloud-sdk-app-engine-go google-cloud-sdk-bigtable-emulator 
 COMPDIR='~/.oh-my-zsh/completions'
 mkdir -p $COMPDIR
@@ -75,7 +78,7 @@ curl -sL https://packages.microsoft.com/keys/microsoft.asc |
     gpg --dearmor |
     sudo tee /etc/apt/trusted.gpg.d/microsoft.asc.gpg > /dev/null
 # AZ_REPO=$(lsb_release -cs)
-AZ_REPO=eoan
+AZ_REPO=$(cat /etc/os-release | grep UBUNTU_CODENAME | cut -d'=' -f2)
 echo "deb [arch=amd64] https://packages.microsoft.com/repos/azure-cli/ $AZ_REPO main" |
     sudo tee /etc/apt/sources.list.d/azure-cli.list
 
@@ -111,7 +114,7 @@ fi
 # https://docs.docker.com/engine/install/ubuntu/
 # https://nickjanetakis.com/blog/setting-up-docker-for-windows-and-wsl-to-work-flawlessly
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(cat /etc/os-release | grep UBUNTU_CODENAME | cut -d'=' -f2) stable"
 sudo apt-get update
 sudo apt-get -y install docker-ce docker-ce-cli containerd.io
 sudo systemctl disable docker
@@ -145,6 +148,7 @@ fi
 curl -s "https://get.sdkman.io" | zsh
 source ~/.zshrc
 sdk install java ; sdk install kotlin ; sdk install maven ; sdk install gradle ; sdk install springboot
+sdk flush version
 
 # NVM
 curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.34.0/install.sh | zsh
