@@ -168,3 +168,11 @@ sudo ln -s /opt/eg/eg_exec.py /usr/local/bin/eg;
 
 # colorls
 sudo gem install colorls
+
+# Vim Airline
+## Be sure that git AUTOCRLF is true before running that one (or run dos2unix on all *.vim files once downloaded)
+mkdir -p ~/.vim/autoload ~/.vim/bundle && curl -LSso ~/.vim/autoload/pathogen.vim https://tpo.pe/pathogen.vim
+
+git clone https://github.com/vim-airline/vim-airline ~/.vim/bundle/vim-airline
+git clone https://github.com/vim-airline/vim-airline-themes ~/.vim/bundle/vim-airline-themes
+# Open vim and run :Helptags
