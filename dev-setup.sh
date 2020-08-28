@@ -100,6 +100,15 @@ rm -Rf aws
 ## Serverless
 curl -o- -L https://slss.io/install | zsh
 
+## CodeCommit
+# https://www.youtube.com/watch?v=CxKbAxV0Hno
+AWS_SSH_CERT="~/.ssh/codecommit_rsa"
+ssh-keygen -t rsa -b 4096 -C "olivier.dupre@sogeti.com" -f $AWS_SSH_CERT -N ''
+AWS_SSH_KEYCODE="XXXXXXXXX"
+echo "Host git-codecommit.*.amazonaws.com" >> ~/.ssh/config
+echo "	User $AWS_SSH_KEYCODE" >> ~/.ssh/config
+echo "	IdentityFile $AWS_SSH_CERT" >> ~/.ssh/config
+
 # Misc
 # kubeval
 if [ ! \( -e /usr/local/bin/kubeval \) ]; then 
