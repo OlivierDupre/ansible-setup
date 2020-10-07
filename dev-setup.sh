@@ -100,6 +100,12 @@ rm -Rf aws
 ## Serverless
 curl -o- -L https://slss.io/install | zsh
 
+## EKSCTL
+curl --silent --location "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp
+sudo mv /tmp/eksctl /usr/local/bin
+mkdir -p ~/.zsh/completion/
+eksctl completion zsh > ~/.zsh/completion/_eksctl
+
 ## CodeCommit
 # https://www.youtube.com/watch?v=CxKbAxV0Hno
 AWS_SSH_CERT="~/.ssh/codecommit_rsa"
