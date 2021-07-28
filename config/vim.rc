@@ -1,0 +1,16 @@
+set shiftwidth=2
+set softtabstop=2
+set tabstop=2
+set noexpandtab
+set autoindent
+set smartindent
+
+" https://medium.com/@jeantimex/how-to-configure-iterm2-and-vim-like-a-pro-on-macos-e303d25d5b5c
+" https://github.com/tpope/vim-pathogen#runtime-path-manipulation
+" All plugin files MUST be LF (run dos2unix or setup git with autocrlf true
+" before cloning)
+execute pathogen#infect()
+syntax on
+filetype plugin indent on
+
+let g:airline_powerline_fonts = 1

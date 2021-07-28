@@ -1,6 +1,8 @@
 #!/bin/bash
 # Base
-sudo apt install git git-extras curl vim apt-transport-https ca-certificates software-properties-common build-essential libssl-dev htop tree make libc6-i386 lib32z1 libnss3 libc6  python3 python3-venv  python3-pip  libssl-dev libcurl4-gnutls-dev libexpat1-dev unzip  g++ asciinema gnupg-agent apache2-utils lsb-release gnupg gconf2 pkgconf libnotify4 libxss1 libappindicator1 ncdu dbus-x11 zsh zip jq ruby-dev dos2unix tilix
+sudo apt install git git-extras curl vim apt-transport-https ca-certificates software-properties-common build-essential libssl-dev htop tree make libc6-i386 lib32z1 libnss3 libc6  python3 python3-venv  python3-pip  libssl-dev libcurl4-gnutls-dev libexpat1-dev unzip  g++ asciinema gnupg-agent apache2-utils lsb-release gnupg gconf2 pkgconf libnotify4 libxss1 libappindicator1 ncdu dbus-x11 zsh zip jq ruby-dev dos2unix lolcat figlet toilet cowsay tilix
+# Download https://github.com/xero/figlet-fonts
+# Apply https://blog.victormendonca.com/2019/03/10/colorful-banners-with-figlet-and-lolcat/
 
 # FIX the lib6c issue on Ubuntu 20.04 on WSL1
 # https://www.how2shout.com/how-to/how-to-upgrade-ubuntu-18-04-lts-to-20-04-lts-on-wsl-windows-10.html
@@ -98,6 +100,21 @@ rm -Rf aws
 ## Serverless
 curl -o- -L https://slss.io/install | zsh
 
+## EKSCTL
+curl --silent --location "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp
+sudo mv /tmp/eksctl /usr/local/bin
+mkdir -p ~/.zsh/completion/
+eksctl completion zsh > ~/.zsh/completion/_eksctl
+
+## CodeCommit
+# https://www.youtube.com/watch?v=CxKbAxV0Hno
+AWS_SSH_CERT="~/.ssh/codecommit_rsa"
+ssh-keygen -t rsa -b 4096 -C "olivier.dupre@sogeti.com" -f $AWS_SSH_CERT -N ''
+AWS_SSH_KEYCODE="XXXXXXXXX"
+echo "Host git-codecommit.*.amazonaws.com" >> ~/.ssh/config
+echo "	User $AWS_SSH_KEYCODE" >> ~/.ssh/config
+echo "	IdentityFile $AWS_SSH_CERT" >> ~/.ssh/config
+
 # Misc
 # kubeval
 if [ ! \( -e /usr/local/bin/kubeval \) ]; then 
@@ -166,3 +183,11 @@ sudo ln -s /opt/eg/eg_exec.py /usr/local/bin/eg;
 
 # colorls
 sudo gem install colorls
+
+# Vim Airline
+## Be sure that git AUTOCRLF is true before running that one (or run dos2unix on all *.vim files once downloaded)
+mkdir -p ~/.vim/autoload ~/.vim/bundle && curl -LSso ~/.vim/autoload/pathogen.vim https://tpo.pe/pathogen.vim
+
+git clone https://github.com/vim-airline/vim-airline ~/.vim/bundle/vim-airline
+git clone https://github.com/vim-airline/vim-airline-themes ~/.vim/bundle/vim-airline-themes
+# Open vim and run :Helptags
