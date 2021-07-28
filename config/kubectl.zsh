@@ -1,6 +1,7 @@
 #!/bin/zsh
 
-export DOCKER_HOST=tcp://localhost:2375
+# Only for WSL on Windows
+#export DOCKER_HOST=tcp://localhost:2375
 
 # Get container IP by name or ID
 alias dip="docker inspect --format='{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}'"
