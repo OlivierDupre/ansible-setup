@@ -55,7 +55,10 @@
 	# Delete local branches that have been merged to HEAD
 	clean-merged-dry = !git branch -r --merged | grep -v \"\\*\" | grep -v master |grep -v develop|xargs -L1|awk -F 'origin/' '{print $2}'
 	clean-merged = !git branch -r --merged | grep -v \"\\*\" | grep -v master |grep -v develop|xargs -L1|awk -F 'origin/' '{print $2}'| xargs git push origin --delete --dry-run
-	# Find files
+	# Clean local branches that are no longer in remote
+	clean-deleted-from-remote-dry = "!git fetch --all --prune >/dev/null 2>/dev/null && git branch -vv | grep ': gone]'| grep -v \"\\*\" | awk '{ print $1; }'"
+	clean-deleted-from-remote = "!git fetch --all --prune >/dev/null 2>/dev/null && git branch -vv | grep ': gone]'| grep -v \"\\*\" | awk '{ print $1; }' | xargs -r git branch -d "
+  	# Find files
 	f = "!git ls-files | grep -i"
 	find = "!git ls-files | grep -i"
 	# Diff from revision
